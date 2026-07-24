@@ -39,7 +39,6 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        /* Header */
         .header {
             background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
             color: white;
@@ -65,22 +64,10 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
         }
 
-        .logo-container img {
-            width: 55px;
-            height: 55px;
-            object-fit: contain;
-        }
+        .logo-container img { width: 55px; height: 55px; object-fit: contain; }
 
-        .header h1 {
-            font-size: 20px;
-            margin-bottom: 4px;
-            font-weight: 700;
-        }
-
-        .header p {
-            font-size: 12px;
-            opacity: 0.85;
-        }
+        .header h1 { font-size: 20px; margin-bottom: 4px; font-weight: 700; }
+        .header p { font-size: 12px; opacity: 0.85; }
 
         .currency-select {
             margin-top: 12px;
@@ -96,24 +83,22 @@
             backdrop-filter: blur(10px);
         }
 
-        .currency-select option {
-            background: var(--primary);
-            color: white;
+        .currency-select option { background: var(--primary); color: white; }
+
+        .auto-detect-badge {
+            display: inline-block;
+            font-size: 10px;
+            background: rgba(16,185,129,0.3);
+            color: #a7f3d0;
+            padding: 2px 10px;
+            border-radius: 12px;
+            margin-top: 6px;
+            font-weight: 600;
         }
 
-        /* Cards */
-        .container {
-            padding: 16px;
-            max-width: 500px;
-            margin: 0 auto;
-        }
+        .container { padding: 16px; max-width: 500px; margin: 0 auto; }
 
-        .card-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-bottom: 16px;
-        }
+        .card-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
 
         .card {
             background: var(--card);
@@ -125,52 +110,17 @@
         }
 
         .card:active { transform: scale(0.98); }
-
         .card-full { grid-column: span 2; }
 
-        .card-income {
-            background: linear-gradient(135deg, #10b981, #059669);
-            color: white;
-            border: none;
-        }
+        .card-income { background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; }
+        .card-expense { background: linear-gradient(135deg, #ef4444, #dc2626); color: white; border: none; }
+        .card-savings { background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; border: none; }
+        .card-loan { background: linear-gradient(135deg, #f59e0b, #d97706); color: white; border: none; }
 
-        .card-expense {
-            background: linear-gradient(135deg, #ef4444, #dc2626);
-            color: white;
-            border: none;
-        }
+        .card-label { font-size: 11px; opacity: 0.9; margin-bottom: 6px; font-weight: 500; }
+        .card-value { font-size: 22px; font-weight: 700; }
+        .card-sub { font-size: 11px; opacity: 0.8; margin-top: 4px; }
 
-        .card-savings {
-            background: linear-gradient(135deg, #3b82f6, #2563eb);
-            color: white;
-            border: none;
-        }
-
-        .card-loan {
-            background: linear-gradient(135deg, #f59e0b, #d97706);
-            color: white;
-            border: none;
-        }
-
-        .card-label {
-            font-size: 11px;
-            opacity: 0.9;
-            margin-bottom: 6px;
-            font-weight: 500;
-        }
-
-        .card-value {
-            font-size: 22px;
-            font-weight: 700;
-        }
-
-        .card-sub {
-            font-size: 11px;
-            opacity: 0.8;
-            margin-top: 4px;
-        }
-
-        /* Section Title */
         .section-title {
             font-size: 16px;
             font-weight: 700;
@@ -181,7 +131,6 @@
             gap: 8px;
         }
 
-        /* Forms */
         .form-card {
             background: var(--card);
             border-radius: 16px;
@@ -191,10 +140,7 @@
             margin-bottom: 16px;
         }
 
-        .form-group {
-            margin-bottom: 14px;
-        }
-
+        .form-group { margin-bottom: 14px; }
         .form-group label {
             display: block;
             font-size: 13px;
@@ -215,14 +161,8 @@
             outline: none;
         }
 
-        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
-            border-color: var(--secondary);
-        }
-
-        .form-group textarea {
-            resize: vertical;
-            min-height: 60px;
-        }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--secondary); }
+        .form-group textarea { resize: vertical; min-height: 60px; }
 
         .btn {
             width: 100%;
@@ -262,7 +202,6 @@
             box-shadow: 0 4px 15px rgba(245,158,11,0.3);
         }
 
-        /* Lists */
         .list-item {
             background: var(--card);
             border-radius: 14px;
@@ -277,27 +216,11 @@
         }
 
         .list-item:active { transform: scale(0.98); }
+        .list-item-left { flex: 1; }
 
-        .list-item-left {
-            flex: 1;
-        }
-
-        .list-item-title {
-            font-weight: 700;
-            font-size: 15px;
-            color: var(--text);
-            margin-bottom: 4px;
-        }
-
-        .list-item-sub {
-            font-size: 12px;
-            color: var(--text-light);
-        }
-
-        .list-item-amount {
-            font-size: 18px;
-            font-weight: 700;
-        }
+        .list-item-title { font-weight: 700; font-size: 15px; color: var(--text); margin-bottom: 4px; }
+        .list-item-sub { font-size: 12px; color: var(--text-light); }
+        .list-item-amount { font-size: 18px; font-weight: 700; }
 
         .amount-income { color: var(--success); }
         .amount-expense { color: var(--danger); }
@@ -313,17 +236,9 @@
             margin-top: 6px;
         }
 
-        .badge-success {
-            background: #d1fae5;
-            color: #065f46;
-        }
+        .badge-success { background: #d1fae5; color: #065f46; }
+        .badge-pending { background: #fee2e2; color: #991b1b; }
 
-        .badge-pending {
-            background: #fee2e2;
-            color: #991b1b;
-        }
-
-        /* Bottom Nav */
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -352,17 +267,9 @@
             font-family: inherit;
         }
 
-        .nav-item.active {
-            color: var(--primary);
-        }
+        .nav-item.active { color: var(--primary); }
+        .nav-icon { font-size: 22px; display: block; margin-bottom: 2px; }
 
-        .nav-icon {
-            font-size: 22px;
-            display: block;
-            margin-bottom: 2px;
-        }
-
-        /* Pages */
         .page { display: none; }
         .page.active { display: block; animation: fadeIn 0.3s; }
 
@@ -371,7 +278,6 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Modal */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -401,28 +307,10 @@
             to { transform: scale(1); opacity: 1; }
         }
 
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .modal-title { font-size: 18px; font-weight: 700; color: var(--primary); }
+        .modal-close { background: none; border: none; font-size: 24px; cursor: pointer; color: var(--text-light); }
 
-        .modal-title {
-            font-size: 18px;
-            font-weight: 700;
-            color: var(--primary);
-        }
-
-        .modal-close {
-            background: none;
-            border: none;
-            font-size: 24px;
-            cursor: pointer;
-            color: var(--text-light);
-        }
-
-        /* Summary Section */
         .summary-box {
             background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
             border-radius: 16px;
@@ -449,20 +337,9 @@
             border-top: 2px solid var(--primary);
         }
 
-        /* Empty State */
-        .empty-state {
-            text-align: center;
-            padding: 40px 20px;
-            color: var(--text-light);
-        }
+        .empty-state { text-align: center; padding: 40px 20px; color: var(--text-light); }
+        .empty-state-icon { font-size: 48px; margin-bottom: 12px; opacity: 0.5; }
 
-        .empty-state-icon {
-            font-size: 48px;
-            margin-bottom: 12px;
-            opacity: 0.5;
-        }
-
-        /* Toast */
         .toast {
             position: fixed;
             bottom: 100px;
@@ -481,12 +358,8 @@
             white-space: nowrap;
         }
 
-        .toast.show {
-            opacity: 1;
-            transform: translateX(-50%) translateY(0);
-        }
+        .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-        /* Auth Screen */
         .auth-screen {
             min-height: 100vh;
             display: flex;
@@ -508,19 +381,9 @@
             box-shadow: 0 20px 60px rgba(0,0,0,0.3);
         }
 
-        .auth-logo {
-            width: 80px;
-            height: 80px;
-            margin: 0 auto 20px;
-            display: block;
-        }
+        .auth-logo { width: 80px; height: 80px; margin: 0 auto 20px; display: block; }
 
-        /* Action Buttons in List */
-        .action-btns {
-            display: flex;
-            gap: 8px;
-            margin-top: 8px;
-        }
+        .action-btns { display: flex; gap: 8px; margin-top: 8px; }
 
         .btn-sm {
             padding: 6px 14px;
@@ -532,13 +395,8 @@
             font-family: inherit;
         }
 
-        .btn-outline {
-            background: transparent;
-            border: 2px solid var(--success);
-            color: var(--success);
-        }
+        .btn-outline { background: transparent; border: 2px solid var(--success); color: var(--success); }
 
-        /* Filter tabs */
         .filter-tabs {
             display: flex;
             gap: 8px;
@@ -560,13 +418,8 @@
             color: var(--text-light);
         }
 
-        .filter-tab.active {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
-        }
+        .filter-tab.active { background: var(--primary); color: white; border-color: var(--primary); }
 
-        /* Month Selector */
         .month-selector {
             display: flex;
             align-items: center;
@@ -588,13 +441,8 @@
             justify-content: center;
         }
 
-        .month-selector span {
-            font-weight: 700;
-            font-size: 16px;
-            color: var(--primary);
-        }
+        .month-selector span { font-weight: 700; font-size: 16px; color: var(--primary); }
 
-        /* Loading */
         .loading {
             display: inline-block;
             width: 20px;
@@ -606,7 +454,6 @@
         }
 
         @keyframes spin { to { transform: rotate(360deg); } }
-
         .hidden { display: none !important; }
     </style>
 <base target="_blank">
@@ -618,7 +465,7 @@
     <div class="auth-box">
         <img src="LOGO.png" alt="Logo" class="auth-logo" onerror="this.style.display='none'">
         <h2 style="text-align:center;margin-bottom:8px;color:var(--primary);">My Money Manager</h2>
-        <p style="text-align:center;color:var(--text-light);font-size:13px;margin-bottom:24px;">உங்கள் பணத்தை ஸ்மார்ட்டாக மேலாண்மை செய்யுங்கள்</p>
+        <p style="text-align:center;color:var(--text-light);font-size:13px;margin-bottom:24px;">Smart Finance Tracker</p>
 
         <div class="form-group">
             <label>Email</label>
@@ -630,7 +477,7 @@
         </div>
         <button class="btn btn-primary" onclick="login()" id="loginBtn">Login / Register</button>
         <p style="text-align:center;margin-top:16px;font-size:12px;color:var(--text-light);">
-            No account? Enter email & password and click Login to auto-register
+            New user? Just enter email & password and click Login
         </p>
     </div>
 </div>
@@ -651,6 +498,7 @@
             <option value="KWD">🇰🇼 KWD (د.ك)</option>
             <option value="AED">🇦🇪 AED (د.إ)</option>
         </select>
+        <div class="auto-detect-badge" id="autoDetectBadge">🌍 Auto-Detecting...</div>
     </div>
 
     <div class="container">
@@ -658,17 +506,17 @@
         <div id="pageDashboard" class="page active">
             <div class="card-grid">
                 <div class="card card-income">
-                    <div class="card-label">📥 Income (வருமானம்)</div>
+                    <div class="card-label">📥 Income</div>
                     <div class="card-value" id="dashIncome">0</div>
                     <div class="card-sub" id="dashIncomeCount">0 transactions</div>
                 </div>
                 <div class="card card-expense">
-                    <div class="card-label">📤 Expense (செலவு)</div>
+                    <div class="card-label">📤 Expense</div>
                     <div class="card-value" id="dashExpense">0</div>
                     <div class="card-sub" id="dashExpenseCount">0 transactions</div>
                 </div>
                 <div class="card card-savings card-full">
-                    <div class="card-label">💎 Savings (மிச்சம்)</div>
+                    <div class="card-label">💎 Savings</div>
                     <div class="card-value" id="dashSavings">0</div>
                     <div class="card-sub" id="currentMonth">This Month</div>
                 </div>
@@ -713,9 +561,7 @@
                 <span id="incomeMonth">July 2026</span>
                 <button onclick="changeMonth(1)">▶</button>
             </div>
-
             <button class="btn btn-success" onclick="openModal('incomeModal')" style="margin-bottom:16px;">+ Add Income</button>
-
             <div id="incomeList"></div>
         </div>
 
@@ -726,9 +572,7 @@
                 <span id="expenseMonth">July 2026</span>
                 <button onclick="changeMonth(1)">▶</button>
             </div>
-
             <button class="btn btn-danger" onclick="openModal('expenseModal')" style="margin-bottom:16px;">+ Add Expense</button>
-
             <div id="expenseList"></div>
         </div>
 
@@ -736,13 +580,11 @@
         <div id="pageLoan" class="page">
             <div class="filter-tabs">
                 <button class="filter-tab active" onclick="filterLoan('all')">All</button>
-                <button class="filter-tab" onclick="filterLoan('given')">Given (கொடுத்தது)</button>
-                <button class="filter-tab" onclick="filterLoan('taken')">Taken (வாங்கியது)</button>
+                <button class="filter-tab" onclick="filterLoan('given')">Given</button>
+                <button class="filter-tab" onclick="filterLoan('taken')">Taken</button>
                 <button class="filter-tab" onclick="filterLoan('pending')">Pending</button>
             </div>
-
             <button class="btn btn-warning" onclick="openModal('loanModal')" style="margin-bottom:16px;">+ Add Loan</button>
-
             <div id="loanList"></div>
         </div>
     </div>
@@ -750,27 +592,21 @@
     <!-- Bottom Navigation -->
     <div class="bottom-nav">
         <button class="nav-item active" onclick="showPage('dashboard')">
-            <span class="nav-icon">🏠</span>
-            Home
+            <span class="nav-icon">🏠</span>Home
         </button>
         <button class="nav-item" onclick="showPage('income')">
-            <span class="nav-icon">💵</span>
-            Income
+            <span class="nav-icon">💵</span>Income
         </button>
         <button class="nav-item" onclick="showPage('expense')">
-            <span class="nav-icon">💸</span>
-            Expense
+            <span class="nav-icon">💸</span>Expense
         </button>
         <button class="nav-item" onclick="showPage('loan')">
-            <span class="nav-icon">📝</span>
-            Loan
+            <span class="nav-icon">📝</span>Loan
         </button>
     </div>
 </div>
 
 <!-- MODALS -->
-
-<!-- Income Modal -->
 <div class="modal-overlay" id="incomeModal">
     <div class="modal">
         <div class="modal-header">
@@ -778,26 +614,25 @@
             <button class="modal-close" onclick="closeModal('incomeModal')">&times;</button>
         </div>
         <div class="form-group">
-            <label>Source (வருமானம் மூலம்)</label>
+            <label>Source</label>
             <input type="text" id="incomeSource" placeholder="Salary, Business, etc.">
         </div>
         <div class="form-group">
-            <label>Amount (தொகை)</label>
+            <label>Amount (<span class="currency-label">Rs</span>)</label>
             <input type="number" id="incomeAmount" placeholder="0.00">
         </div>
         <div class="form-group">
-            <label>Date (தேதி)</label>
+            <label>Date</label>
             <input type="date" id="incomeDate">
         </div>
         <div class="form-group">
-            <label>Notes (குறிப்புகள்)</label>
+            <label>Notes</label>
             <textarea id="incomeNotes" placeholder="Optional..."></textarea>
         </div>
         <button class="btn btn-success" onclick="addIncome()">Save Income</button>
     </div>
 </div>
 
-<!-- Expense Modal -->
 <div class="modal-overlay" id="expenseModal">
     <div class="modal">
         <div class="modal-header">
@@ -805,35 +640,34 @@
             <button class="modal-close" onclick="closeModal('expenseModal')">&times;</button>
         </div>
         <div class="form-group">
-            <label>Category (வகை)</label>
+            <label>Category</label>
             <select id="expenseCategory">
-                <option value="Food">🍔 Food (உணவு)</option>
-                <option value="Transport">🚗 Transport (போக்குவரத்து)</option>
-                <option value="Shopping">🛍️ Shopping (ஷாப்பிங்)</option>
-                <option value="Bills">💡 Bills (கட்டணங்கள்)</option>
-                <option value="Medical">🏥 Medical (மருத்துவம்)</option>
-                <option value="Education">📚 Education (கல்வி)</option>
-                <option value="Entertainment">🎬 Entertainment (பொழுதுபோக்கு)</option>
-                <option value="Other">📦 Other (மற்றவை)</option>
+                <option value="Food">🍔 Food</option>
+                <option value="Transport">🚗 Transport</option>
+                <option value="Shopping">🛍️ Shopping</option>
+                <option value="Bills">💡 Bills</option>
+                <option value="Medical">🏥 Medical</option>
+                <option value="Education">📚 Education</option>
+                <option value="Entertainment">🎬 Entertainment</option>
+                <option value="Other">📦 Other</option>
             </select>
         </div>
         <div class="form-group">
-            <label>Description (விவரம்)</label>
+            <label>Description</label>
             <input type="text" id="expenseDesc" placeholder="What did you spend on?">
         </div>
         <div class="form-group">
-            <label>Amount (தொகை)</label>
+            <label>Amount (<span class="currency-label">Rs</span>)</label>
             <input type="number" id="expenseAmount" placeholder="0.00">
         </div>
         <div class="form-group">
-            <label>Date (தேதி)</label>
+            <label>Date</label>
             <input type="date" id="expenseDate">
         </div>
         <button class="btn btn-danger" onclick="addExpense()">Save Expense</button>
     </div>
 </div>
 
-<!-- Loan Modal -->
 <div class="modal-overlay" id="loanModal">
     <div class="modal">
         <div class="modal-header">
@@ -841,52 +675,50 @@
             <button class="modal-close" onclick="closeModal('loanModal')">&times;</button>
         </div>
         <div class="form-group">
-            <label>Type (வகை)</label>
+            <label>Type</label>
             <select id="loanType">
                 <option value="given">📤 I Gave (கொடுத்தேன்)</option>
                 <option value="taken">📥 I Took (வாங்கினேன்)</option>
             </select>
         </div>
         <div class="form-group">
-            <label>Person Name (பெயர்)</label>
+            <label>Person Name</label>
             <input type="text" id="loanPerson" placeholder="Who?">
         </div>
         <div class="form-group">
-            <label>Amount (தொகை)</label>
+            <label>Amount (<span class="currency-label">Rs</span>)</label>
             <input type="number" id="loanAmount" placeholder="0.00">
         </div>
         <div class="form-group">
-            <label>Reason (காரணம்)</label>
+            <label>Reason</label>
             <input type="text" id="loanReason" placeholder="Why?">
         </div>
         <div class="form-group">
-            <label>Date Given/Taken (தேதி)</label>
+            <label>Date Given/Taken</label>
             <input type="date" id="loanDate">
         </div>
         <div class="form-group">
-            <label>Expected Return Date (திருப்பி கொடுக்க வேண்டிய தேதி)</label>
+            <label>Expected Return Date</label>
             <input type="date" id="loanReturnDate">
         </div>
         <button class="btn btn-warning" onclick="addLoan()">Save Loan</button>
     </div>
 </div>
 
-<!-- Toast -->
 <div class="toast" id="toast"></div>
 
 <script>
 // ===================== FIREBASE CONFIG =====================
-// IMPORTANT: Replace with your Firebase config from Firebase Console
 const firebaseConfig = {
-  apiKey: "AIzaSyDPdzf3tvImJCa0fffG2HUOW0O6w_KtMZw",
-  authDomain: "personal-manager-54df3.firebaseapp.com",
-  projectId: "personal-manager-54df3",
-  storageBucket: "personal-manager-54df3.firebasestorage.app",
-  messagingSenderId: "933455390873",
-  appId: "1:933455390873:web:a3b5cb147fbd0349d5b008"
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+    databaseURL: "https://YOUR_PROJECT_ID-default-rtdb.firebaseio.com",
+    projectId: "YOUR_PROJECT_ID",
+    storageBucket: "YOUR_PROJECT_ID.appspot.com",
+    messagingSenderId: "YOUR_SENDER_ID",
+    appId: "YOUR_APP_ID"
 };
 
-// Initialize Firebase
 let app, db, auth;
 try {
     app = firebase.initializeApp(firebaseConfig);
@@ -896,27 +728,130 @@ try {
     console.log("Firebase not configured yet");
 }
 
-// ===================== STATE =====================
-let currentUser = null;
+// ===================== CURRENCY CONFIGURATION =====================
+const currencyConfig = {
+    LKR: { symbol: 'Rs', name: 'Sri Lankan Rupee', flag: '🇱🇰', locale: 'ta-LK' },
+    SAR: { symbol: '﷼', name: 'Saudi Riyal', flag: '🇸🇦', locale: 'ar-SA' },
+    QAR: { symbol: '﷼', name: 'Qatari Riyal', flag: '🇶🇦', locale: 'ar-QA' },
+    KWD: { symbol: 'د.ك', name: 'Kuwaiti Dinar', flag: '🇰🇼', locale: 'ar-KW' },
+    AED: { symbol: 'د.إ', name: 'UAE Dirham', flag: '🇦🇪', locale: 'ar-AE' }
+};
+
+// Timezone to Currency mapping
+const timezoneToCurrency = {
+    'Asia/Colombo': 'LKR',
+    'Asia/Riyadh': 'SAR',
+    'Asia/Qatar': 'QAR',
+    'Asia/Kuwait': 'KWD',
+    'Asia/Dubai': 'AED',
+    'Asia/Muscat': 'AED',
+    'Asia/Bahrain': 'AED'
+};
+
+// Country code to Currency mapping (fallback)
+const countryToCurrency = {
+    'LK': 'LKR', 'SA': 'SAR', 'QA': 'QAR', 'KW': 'KWD', 'AE': 'AED',
+    'OM': 'AED', 'BH': 'AED', 'IN': 'LKR'
+};
+
 let currentCurrency = 'LKR';
+let currentUser = null;
 let currentMonth = new Date();
 let loanFilter = 'all';
 
-const currencySymbols = {
-    LKR: 'Rs',
-    SAR: '﷼',
-    QAR: '﷼',
-    KWD: 'د.ك',
-    AED: 'د.إ'
-};
+// ===================== AUTO DETECT CURRENCY =====================
+function detectCurrency() {
+    // 1. Check if user previously selected a currency
+    const savedCurrency = localStorage.getItem('mm_currency');
+    if(savedCurrency && currencyConfig[savedCurrency]) {
+        currentCurrency = savedCurrency;
+        updateCurrencyUI();
+        showDetectBadge('💾 Saved: ' + currencyConfig[savedCurrency].name);
+        return;
+    }
 
-const currencyNames = {
-    LKR: 'Sri Lankan Rupee',
-    SAR: 'Saudi Riyal',
-    QAR: 'Qatari Riyal',
-    KWD: 'Kuwaiti Dinar',
-    AED: 'UAE Dirham'
-};
+    // 2. Try timezone detection
+    try {
+        const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        if(timezoneToCurrency[timezone]) {
+            currentCurrency = timezoneToCurrency[timezone];
+            updateCurrencyUI();
+            showDetectBadge('🌍 Auto: ' + currencyConfig[currentCurrency].name + ' (' + timezone + ')');
+            saveCurrencyPreference();
+            return;
+        }
+    } catch(e) {}
+
+    // 3. Try navigator.language detection
+    try {
+        const lang = navigator.language || navigator.userLanguage;
+        const country = lang.split('-')[1];
+        if(country && countryToCurrency[country]) {
+            currentCurrency = countryToCurrency[country];
+            updateCurrencyUI();
+            showDetectBadge('🌐 Auto: ' + currencyConfig[currentCurrency].name);
+            saveCurrencyPreference();
+            return;
+        }
+    } catch(e) {}
+
+    // 4. Default to LKR
+    currentCurrency = 'LKR';
+    updateCurrencyUI();
+    showDetectBadge('📍 Default: Sri Lankan Rupee');
+    saveCurrencyPreference();
+}
+
+function showDetectBadge(text) {
+    const badge = document.getElementById('autoDetectBadge');
+    badge.textContent = text;
+    badge.style.opacity = '1';
+    setTimeout(() => {
+        badge.style.transition = 'opacity 2s';
+        badge.style.opacity = '0.6';
+    }, 3000);
+}
+
+function updateCurrencyUI() {
+    const select = document.getElementById('currencySelect');
+    if(select) select.value = currentCurrency;
+
+    // Update all currency labels in modals
+    document.querySelectorAll('.currency-label').forEach(el => {
+        el.textContent = currencyConfig[currentCurrency].symbol;
+    });
+
+    // Update document title
+    document.title = 'My Money Manager - ' + currencyConfig[currentCurrency].name;
+}
+
+function saveCurrencyPreference() {
+    localStorage.setItem('mm_currency', currentCurrency);
+
+    // Also save to Firebase if logged in
+    if(db && currentUser) {
+        db.ref('users/' + currentUser.uid + '/settings/currency').set(currentCurrency);
+    }
+}
+
+function changeCurrency() {
+    const newCurrency = document.getElementById('currencySelect').value;
+    if(newCurrency === currentCurrency) return;
+
+    currentCurrency = newCurrency;
+    saveCurrencyPreference();
+    updateCurrencyUI();
+    loadAllData();
+    showToast('💱 Currency: ' + currencyConfig[currentCurrency].name);
+}
+
+function formatMoney(amount) {
+    const symbol = currencyConfig[currentCurrency].symbol;
+    return symbol + ' ' + parseFloat(amount).toLocaleString('en-US', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    });
+}
 
 // ===================== AUTH =====================
 function login() {
@@ -947,10 +882,24 @@ function login() {
 function showMainApp() {
     document.getElementById('authScreen').classList.add('hidden');
     document.getElementById('mainApp').classList.remove('hidden');
-    loadAllData();
+
+    // Load user's saved currency from Firebase
+    if(db && currentUser) {
+        db.ref('users/' + currentUser.uid + '/settings/currency').once('value').then(snap => {
+            const saved = snap.val();
+            if(saved && currencyConfig[saved]) {
+                currentCurrency = saved;
+                localStorage.setItem('mm_currency', saved);
+                updateCurrencyUI();
+                showDetectBadge('☁️ Cloud: ' + currencyConfig[saved].name);
+            }
+            loadAllData();
+        });
+    } else {
+        loadAllData();
+    }
 }
 
-// Check auth state
 if(auth) {
     auth.onAuthStateChanged(user => {
         if(user) {
@@ -968,24 +917,8 @@ function showPage(page) {
     document.getElementById('page' + page.charAt(0).toUpperCase() + page.slice(1)).classList.add('active');
     event.target.closest('.nav-item').classList.add('active');
 
-    if(page === 'income' || page === 'expense') {
-        updateMonthDisplay();
-    }
-    if(page === 'loan') {
-        renderLoans();
-    }
-}
-
-// ===================== CURRENCY =====================
-function changeCurrency() {
-    currentCurrency = document.getElementById('currencySelect').value;
-    loadAllData();
-    showToast('Currency: ' + currencyNames[currentCurrency]);
-}
-
-function formatMoney(amount) {
-    const symbol = currencySymbols[currentCurrency] || currentCurrency;
-    return symbol + ' ' + parseFloat(amount).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+    if(page === 'income' || page === 'expense') updateMonthDisplay();
+    if(page === 'loan') renderLoans();
 }
 
 // ===================== MONTH HANDLING =====================
@@ -1010,11 +943,14 @@ function getMonthKey() {
 // ===================== MODALS =====================
 function openModal(id) {
     document.getElementById(id).classList.add('active');
-    // Set today's date
     const today = new Date().toISOString().split('T')[0];
     const modal = document.getElementById(id);
     modal.querySelectorAll('input[type="date"]').forEach(input => {
         if(!input.value) input.value = today;
+    });
+    // Update currency labels
+    modal.querySelectorAll('.currency-label').forEach(el => {
+        el.textContent = currencyConfig[currentCurrency].symbol;
     });
 }
 
@@ -1025,7 +961,6 @@ function closeModal(id) {
     });
 }
 
-// Close modal on overlay click
 document.querySelectorAll('.modal-overlay').forEach(overlay => {
     overlay.addEventListener('click', e => {
         if(e.target === overlay) overlay.classList.remove('active');
@@ -1046,7 +981,6 @@ function getUserRef(path) {
     return db.ref('users/' + currentUser.uid + '/' + path);
 }
 
-// ----- INCOME -----
 function addIncome() {
     const source = document.getElementById('incomeSource').value;
     const amount = parseFloat(document.getElementById('incomeAmount').value);
@@ -1073,7 +1007,6 @@ function addIncome() {
             loadAllData();
         });
     } else {
-        // Local fallback
         saveLocal('income', data);
         showToast('Income saved locally');
         closeModal('incomeModal');
@@ -1081,7 +1014,6 @@ function addIncome() {
     }
 }
 
-// ----- EXPENSE -----
 function addExpense() {
     const category = document.getElementById('expenseCategory').value;
     const desc = document.getElementById('expenseDesc').value;
@@ -1115,7 +1047,6 @@ function addExpense() {
     }
 }
 
-// ----- LOAN -----
 function addLoan() {
     const type = document.getElementById('loanType').value;
     const person = document.getElementById('loanPerson').value;
@@ -1191,7 +1122,7 @@ function deleteLoan(key) {
     }
 }
 
-// ===================== LOCAL STORAGE FALLBACK =====================
+// ===================== LOCAL STORAGE =====================
 function saveLocal(type, data) {
     let items = JSON.parse(localStorage.getItem('mm_' + type) || '[]');
     data.id = Date.now().toString();
@@ -1206,7 +1137,6 @@ function getLocal(type) {
 // ===================== LOAD & RENDER =====================
 function loadAllData() {
     updateMonthDisplay();
-
     if(db && currentUser) {
         loadFromFirebase();
     } else {
@@ -1217,7 +1147,6 @@ function loadAllData() {
 function loadFromFirebase() {
     const monthKey = getMonthKey();
 
-    // Income
     getUserRef('income').once('value').then(snap => {
         const data = snap.val() || {};
         const items = Object.entries(data).map(([key,val]) => ({...val, key}));
@@ -1225,7 +1154,6 @@ function loadFromFirebase() {
         updateDashboard(items, 'income');
     });
 
-    // Expense
     getUserRef('expense').once('value').then(snap => {
         const data = snap.val() || {};
         const items = Object.entries(data).map(([key,val]) => ({...val, key}));
@@ -1233,7 +1161,6 @@ function loadFromFirebase() {
         updateDashboard(items, 'expense');
     });
 
-    // Loans
     getUserRef('loans').once('value').then(snap => {
         const data = snap.val() || {};
         const items = Object.entries(data).map(([key,val]) => ({...val, key}));
@@ -1257,16 +1184,14 @@ function loadFromLocal() {
     updateLoanSummaryLocal(loans);
 }
 
-// ----- RENDER INCOME -----
+// ===================== RENDER FUNCTIONS =====================
 function renderIncome(items) {
     const container = document.getElementById('incomeList');
     if(items.length === 0) {
         container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">💵</div><p>No income this month</p></div>';
         return;
     }
-
     items.sort((a,b) => new Date(b.date) - new Date(a.date));
-
     container.innerHTML = items.map(item => `
         <div class="list-item">
             <div class="list-item-left">
@@ -1278,16 +1203,13 @@ function renderIncome(items) {
     `).join('');
 }
 
-// ----- RENDER EXPENSE -----
 function renderExpense(items) {
     const container = document.getElementById('expenseList');
     if(items.length === 0) {
         container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">💸</div><p>No expenses this month</p></div>';
         return;
     }
-
     items.sort((a,b) => new Date(b.date) - new Date(a.date));
-
     container.innerHTML = items.map(item => `
         <div class="list-item">
             <div class="list-item-left">
@@ -1299,7 +1221,6 @@ function renderExpense(items) {
     `).join('');
 }
 
-// ----- RENDER LOANS -----
 function filterLoan(type) {
     loanFilter = type;
     document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
@@ -1311,7 +1232,6 @@ function renderLoans(items) {
     const container = document.getElementById('loanList');
 
     if(!items) {
-        // Called from nav, need to reload
         if(db && currentUser) {
             getUserRef('loans').once('value').then(snap => {
                 const data = snap.val() || {};
@@ -1323,13 +1243,11 @@ function renderLoans(items) {
         }
         return;
     }
-
     doRenderLoans(items);
 }
 
 function doRenderLoans(items) {
     const container = document.getElementById('loanList');
-
     let filtered = items;
     if(loanFilter === 'given') filtered = items.filter(i => i.type === 'given');
     if(loanFilter === 'taken') filtered = items.filter(i => i.type === 'taken');
@@ -1378,7 +1296,7 @@ function doRenderLoans(items) {
     }).join('');
 }
 
-// ----- UPDATE DASHBOARD -----
+// ===================== DASHBOARD UPDATES =====================
 function updateDashboard(items, type) {
     const monthKey = getMonthKey();
     const filtered = items.filter(i => i.monthKey === monthKey && i.currency === currentCurrency);
@@ -1392,8 +1310,6 @@ function updateDashboard(items, type) {
         document.getElementById('dashExpense').textContent = formatMoney(total);
         document.getElementById('dashExpenseCount').textContent = filtered.length + ' transactions';
     }
-
-    // Calculate savings
     updateSavings();
 }
 
@@ -1419,7 +1335,6 @@ function updateSavings() {
     document.getElementById('dashSavings').textContent = formatMoney(inc - exp);
 }
 
-// ----- UPDATE LOAN SUMMARY -----
 function updateLoanSummary(items) {
     const given = items.filter(i => i.type === 'given');
     const taken = items.filter(i => i.type === 'taken');
@@ -1437,7 +1352,6 @@ function updateLoanSummary(items) {
     document.getElementById('summaryReceived').textContent = formatMoney(takenTotal);
     document.getElementById('summaryNet').textContent = formatMoney(givenPending - takenPending);
 
-    // Overall = Savings + (Taken - Given) [if given is money out, taken is money in]
     const savingsText = document.getElementById('dashSavings').textContent;
     const savings = parseFloat(savingsText.replace(/[^0-9.-]+/g, '')) || 0;
     document.getElementById('summaryOverall').textContent = formatMoney(savings + takenPending - givenPending);
@@ -1474,7 +1388,6 @@ if('serviceWorker' in navigator) {
 // ===================== INIT =====================
 updateMonthDisplay();
 
-// Demo data for first time users (local only)
 function loadDemoData() {
     if(!localStorage.getItem('mm_demo_loaded')) {
         const today = new Date().toISOString().split('T')[0];
@@ -1497,13 +1410,14 @@ function loadDemoData() {
     }
 }
 
-// Load demo if not logged in
+// Auto-detect currency on load
+detectCurrency();
+
 if(!currentUser) {
     loadDemoData();
     loadFromLocal();
 }
 
-// Keyboard shortcuts
 document.addEventListener('keydown', e => {
     if(e.key === 'Escape') {
         document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('active'));
