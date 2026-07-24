@@ -1010,149 +1010,227 @@ function showToast(msg) {
 
 // ===================== DATA OPERATIONS =====================
 function getUserRef(path) {
-    if(!currentUser || !db) return null;
+    if(!currentUser || !db || isLocalMode) return null;
     return db.ref('users/' + currentUser.uid + '/' + path);
 }
 
 function addIncome() {
-    const source = document.getElementById('incomeSource').value.trim();
-    const amount = parseFloat(document.getElementById('incomeAmount').value);
-    const date = document.getElementById('incomeDate').value;
-    const notes = document.getElementById('incomeNotes').value.trim();
+    const sourceEl = document.getElementById('incomeSource');
+    const amountEl = document.getElementById('incomeAmount');
+    const dateEl = document.getElementById('incomeDate');
+    const notesEl = document.getElementById('incomeNotes');
+
+    if(!sourceEl || !amountEl || !dateEl) {
+        showToast('Form error - please refresh');
+        return;
+    }
+
+    const source = sourceEl.value.trim();
+    const amount = parseFloat(amountEl.value);
+    const date = dateEl.value;
+    const notes = notesEl ? notesEl.value.trim() : '';
 
     if(!source || !amount || amount <= 0 || !date) {
-        showToast('Please fill all fields correctly');
+        showToast('⚠️ Please fill all fields correctly');
         return;
     }
 
     const data = {
-        source, amount, date, notes,
+        source: source,
+        amount: amount,
+        date: date,
+        notes: notes,
         currency: currentCurrency,
         timestamp: Date.now(),
         monthKey: date.substring(0,7)
     };
 
     const ref = getUserRef('income');
-    if(ref) {
+    if(ref && !isLocalMode) {
         ref.push(data).then(() => {
-            showToast('Income added! 💵');
+            showToast('✅ Income added!');
             closeModal('incomeModal');
-            loadAllData();
-        }).catch(err => showToast('Error: ' + err.message));
+            setTimeout(loadAllData, 100);
+        }).catch(err => {
+            console.error('Firebase error:', err);
+            saveLocal('income', data);
+            showToast('💾 Saved locally (Firebase error)');
+            closeModal('incomeModal');
+            setTimeout(loadAllData, 100);
+        });
     } else {
         saveLocal('income', data);
-        showToast('Income saved locally');
+        showToast('✅ Income saved!');
         closeModal('incomeModal');
-        loadAllData();
+        setTimeout(loadAllData, 100);
     }
 }
 
 function addExpense() {
-    const category = document.getElementById('expenseCategory').value;
-    const desc = document.getElementById('expenseDesc').value.trim();
-    const amount = parseFloat(document.getElementById('expenseAmount').value);
-    const date = document.getElementById('expenseDate').value;
+    const catEl = document.getElementById('expenseCategory');
+    const descEl = document.getElementById('expenseDesc');
+    const amtEl = document.getElementById('expenseAmount');
+    const dateEl = document.getElementById('expenseDate');
+
+    if(!catEl || !descEl || !amtEl || !dateEl) {
+        showToast('Form error - please refresh');
+        return;
+    }
+
+    const category = catEl.value;
+    const desc = descEl.value.trim();
+    const amount = parseFloat(amtEl.value);
+    const date = dateEl.value;
 
     if(!desc || !amount || amount <= 0 || !date) {
-        showToast('Please fill all fields correctly');
+        showToast('⚠️ Please fill all fields correctly');
         return;
     }
 
     const data = {
-        category, desc, amount, date,
+        category: category,
+        desc: desc,
+        amount: amount,
+        date: date,
         currency: currentCurrency,
         timestamp: Date.now(),
         monthKey: date.substring(0,7)
     };
 
     const ref = getUserRef('expense');
-    if(ref) {
+    if(ref && !isLocalMode) {
         ref.push(data).then(() => {
-            showToast('Expense added! 💸');
+            showToast('✅ Expense added!');
             closeModal('expenseModal');
-            loadAllData();
-        }).catch(err => showToast('Error: ' + err.message));
+            setTimeout(loadAllData, 100);
+        }).catch(err => {
+            console.error('Firebase error:', err);
+            saveLocal('expense', data);
+            showToast('💾 Saved locally (Firebase error)');
+            closeModal('expenseModal');
+            setTimeout(loadAllData, 100);
+        });
     } else {
         saveLocal('expense', data);
-        showToast('Expense saved locally');
+        showToast('✅ Expense saved!');
         closeModal('expenseModal');
-        loadAllData();
+        setTimeout(loadAllData, 100);
     }
 }
 
 function addLoan() {
-    const type = document.getElementById('loanType').value;
-    const person = document.getElementById('loanPerson').value.trim();
-    const amount = parseFloat(document.getElementById('loanAmount').value);
-    const reason = document.getElementById('loanReason').value.trim();
-    const date = document.getElementById('loanDate').value;
-    const returnDate = document.getElementById('loanReturnDate').value;
+    const typeEl = document.getElementById('loanType');
+    const personEl = document.getElementById('loanPerson');
+    const amtEl = document.getElementById('loanAmount');
+    const reasonEl = document.getElementById('loanReason');
+    const dateEl = document.getElementById('loanDate');
+    const retDateEl = document.getElementById('loanReturnDate');
+
+    if(!typeEl || !personEl || !amtEl || !dateEl) {
+        showToast('Form error - please refresh');
+        return;
+    }
+
+    const type = typeEl.value;
+    const person = personEl.value.trim();
+    const amount = parseFloat(amtEl.value);
+    const reason = reasonEl ? reasonEl.value.trim() : '';
+    const date = dateEl.value;
+    const returnDate = retDateEl ? retDateEl.value : '';
 
     if(!person || !amount || amount <= 0 || !date) {
-        showToast('Please fill required fields');
+        showToast('⚠️ Please fill required fields');
         return;
     }
 
     const data = {
-        type, person, amount, reason, date, returnDate,
+        type: type,
+        person: person,
+        amount: amount,
+        reason: reason,
+        date: date,
+        returnDate: returnDate,
         currency: currentCurrency,
         status: 'pending',
         timestamp: Date.now()
     };
 
     const ref = getUserRef('loans');
-    if(ref) {
+    if(ref && !isLocalMode) {
         ref.push(data).then(() => {
-            showToast('Loan recorded! 📝');
+            showToast('✅ Loan recorded!');
             closeModal('loanModal');
-            loadAllData();
-        }).catch(err => showToast('Error: ' + err.message));
+            setTimeout(loadAllData, 100);
+        }).catch(err => {
+            console.error('Firebase error:', err);
+            saveLocal('loans', data);
+            showToast('💾 Saved locally (Firebase error)');
+            closeModal('loanModal');
+            setTimeout(loadAllData, 100);
+        });
     } else {
         saveLocal('loans', data);
-        showToast('Loan saved locally');
+        showToast('✅ Loan saved!');
         closeModal('loanModal');
-        loadAllData();
+        setTimeout(loadAllData, 100);
     }
 }
 
 function markLoanPaid(key) {
+    if(!key) return;
     const ref = getUserRef('loans/' + key);
-    if(ref) {
-        ref.update({
-            status: 'paid',
-            paidDate: new Date().toISOString().split('T')[0]
-        }).then(() => {
-            showToast('Marked as paid! ✅');
-            loadAllData();
-        }).catch(err => showToast('Error: ' + err.message));
+    const paidDate = new Date().toISOString().split('T')[0];
+
+    if(ref && !isLocalMode) {
+        ref.update({ status: 'paid', paidDate: paidDate })
+            .then(() => {
+                showToast('✅ Marked as paid!');
+                setTimeout(loadAllData, 100);
+            })
+            .catch(err => {
+                console.error('Error:', err);
+                updateLocalLoanStatus(key, paidDate);
+            });
     } else {
-        let loans = JSON.parse(localStorage.getItem('mm_loans') || '[]');
-        const idx = loans.findIndex(l => l.id === key);
-        if(idx >= 0) {
-            loans[idx].status = 'paid';
-            loans[idx].paidDate = new Date().toISOString().split('T')[0];
-            localStorage.setItem('mm_loans', JSON.stringify(loans));
-            showToast('Marked as paid! ✅');
-            loadAllData();
-        }
+        updateLocalLoanStatus(key, paidDate);
+    }
+}
+
+function updateLocalLoanStatus(key, paidDate) {
+    let loans = JSON.parse(localStorage.getItem('mm_loans') || '[]');
+    const idx = loans.findIndex(l => l.id === key || l.key === key);
+    if(idx >= 0) {
+        loans[idx].status = 'paid';
+        loans[idx].paidDate = paidDate;
+        localStorage.setItem('mm_loans', JSON.stringify(loans));
+        showToast('✅ Marked as paid!');
+        setTimeout(loadAllData, 100);
     }
 }
 
 function deleteLoan(key) {
-    if(!confirm('Delete this record?')) return;
+    if(!key || !confirm('Delete this record?')) return;
     const ref = getUserRef('loans/' + key);
-    if(ref) {
+
+    if(ref && !isLocalMode) {
         ref.remove().then(() => {
-            showToast('Deleted');
-            loadAllData();
-        }).catch(err => showToast('Error: ' + err.message));
+            showToast('🗑️ Deleted');
+            setTimeout(loadAllData, 100);
+        }).catch(err => {
+            console.error('Error:', err);
+            deleteLocalLoan(key);
+        });
     } else {
-        let loans = JSON.parse(localStorage.getItem('mm_loans') || '[]');
-        loans = loans.filter(l => l.id !== key);
-        localStorage.setItem('mm_loans', JSON.stringify(loans));
-        showToast('Deleted');
-        loadAllData();
+        deleteLocalLoan(key);
     }
+}
+
+function deleteLocalLoan(key) {
+    let loans = JSON.parse(localStorage.getItem('mm_loans') || '[]');
+    loans = loans.filter(l => l.id !== key && l.key !== key);
+    localStorage.setItem('mm_loans', JSON.stringify(loans));
+    showToast('🗑️ Deleted');
+    setTimeout(loadAllData, 100);
 }
 
 // ===================== LOCAL STORAGE =====================
@@ -1170,7 +1248,7 @@ function getLocal(type) {
 // ===================== LOAD & RENDER =====================
 function loadAllData() {
     updateMonthDisplay();
-    if(db && currentUser) {
+    if(db && currentUser && !isLocalMode) {
         loadFromFirebase();
     } else {
         loadFromLocal();
@@ -1482,7 +1560,8 @@ function loadDemoData() {
 // Auto-detect currency on load
 detectCurrency();
 
-if(!currentUser) {
+// If user is already in local mode or not logged in, load demo data
+if(!currentUser && document.getElementById('mainApp').classList.contains('hidden') === false) {
     loadDemoData();
     loadFromLocal();
 }
