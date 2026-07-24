@@ -1,0 +1,1515 @@
+<!DOCTYPE html>
+<html lang="ta">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#1e3a5f">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>My Money Manager - PWA</title>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --primary: #1e3a5f;
+            --secondary: #2d5a87;
+            --accent: #f59e0b;
+            --success: #10b981;
+            --danger: #ef4444;
+            --info: #3b82f6;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --text: #1f2937;
+            --text-light: #6b7280;
+            --border: #e5e7eb;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            padding-bottom: 80px;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 20px 16px;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 20px rgba(30,58,95,0.3);
+        }
+
+        .logo-container {
+            width: 70px;
+            height: 70px;
+            background: white;
+            border-radius: 50%;
+            margin: 0 auto 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            border: 3px solid var(--accent);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .logo-container img {
+            width: 55px;
+            height: 55px;
+            object-fit: contain;
+        }
+
+        .header h1 {
+            font-size: 20px;
+            margin-bottom: 4px;
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: 12px;
+            opacity: 0.85;
+        }
+
+        .currency-select {
+            margin-top: 12px;
+            padding: 8px 16px;
+            border-radius: 25px;
+            border: 2px solid rgba(255,255,255,0.3);
+            background: rgba(255,255,255,0.15);
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            outline: none;
+            backdrop-filter: blur(10px);
+        }
+
+        .currency-select option {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* Cards */
+        .container {
+            padding: 16px;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .card {
+            background: var(--card);
+            border-radius: 16px;
+            padding: 16px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            border: 1px solid var(--border);
+            transition: transform 0.2s;
+        }
+
+        .card:active { transform: scale(0.98); }
+
+        .card-full { grid-column: span 2; }
+
+        .card-income {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            border: none;
+        }
+
+        .card-expense {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+            border: none;
+        }
+
+        .card-savings {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: white;
+            border: none;
+        }
+
+        .card-loan {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+            border: none;
+        }
+
+        .card-label {
+            font-size: 11px;
+            opacity: 0.9;
+            margin-bottom: 6px;
+            font-weight: 500;
+        }
+
+        .card-value {
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        .card-sub {
+            font-size: 11px;
+            opacity: 0.8;
+            margin-top: 4px;
+        }
+
+        /* Section Title */
+        .section-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--primary);
+            margin: 20px 0 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Forms */
+        .form-card {
+            background: var(--card);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            border: 1px solid var(--border);
+            margin-bottom: 16px;
+        }
+
+        .form-group {
+            margin-bottom: 14px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-light);
+            margin-bottom: 6px;
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 12px 14px;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            font-size: 15px;
+            font-family: inherit;
+            background: var(--bg);
+            transition: border-color 0.2s;
+            outline: none;
+        }
+
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            border-color: var(--secondary);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 60px;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+
+        .btn:active { transform: scale(0.97); }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            box-shadow: 0 4px 15px rgba(30,58,95,0.3);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            box-shadow: 0 4px 15px rgba(16,185,129,0.3);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+            box-shadow: 0 4px 15px rgba(239,68,68,0.3);
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+            box-shadow: 0 4px 15px rgba(245,158,11,0.3);
+        }
+
+        /* Lists */
+        .list-item {
+            background: var(--card);
+            border-radius: 14px;
+            padding: 16px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            border: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.2s;
+        }
+
+        .list-item:active { transform: scale(0.98); }
+
+        .list-item-left {
+            flex: 1;
+        }
+
+        .list-item-title {
+            font-weight: 700;
+            font-size: 15px;
+            color: var(--text);
+            margin-bottom: 4px;
+        }
+
+        .list-item-sub {
+            font-size: 12px;
+            color: var(--text-light);
+        }
+
+        .list-item-amount {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .amount-income { color: var(--success); }
+        .amount-expense { color: var(--danger); }
+        .amount-loan-given { color: var(--danger); }
+        .amount-loan-taken { color: var(--success); }
+
+        .badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: 700;
+            margin-top: 6px;
+        }
+
+        .badge-success {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .badge-pending {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        /* Bottom Nav */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            display: flex;
+            justify-content: space-around;
+            padding: 8px 0 12px;
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.08);
+            border-top: 1px solid var(--border);
+            z-index: 1000;
+        }
+
+        .nav-item {
+            flex: 1;
+            text-align: center;
+            padding: 6px;
+            cursor: pointer;
+            color: var(--text-light);
+            font-size: 11px;
+            font-weight: 600;
+            transition: all 0.2s;
+            border: none;
+            background: none;
+            font-family: inherit;
+        }
+
+        .nav-item.active {
+            color: var(--primary);
+        }
+
+        .nav-icon {
+            font-size: 22px;
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        /* Pages */
+        .page { display: none; }
+        .page.active { display: block; animation: fadeIn 0.3s; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-overlay.active { display: flex; }
+
+        .modal {
+            background: white;
+            border-radius: 20px;
+            padding: 24px;
+            width: 100%;
+            max-width: 400px;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: modalIn 0.3s;
+        }
+
+        @keyframes modalIn {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--text-light);
+        }
+
+        /* Summary Section */
+        .summary-box {
+            background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+            border: 2px solid #bae6fd;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px dashed #cbd5e1;
+        }
+
+        .summary-row:last-child {
+            border-bottom: none;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-top: 8px;
+            padding-top: 14px;
+            border-top: 2px solid var(--primary);
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-light);
+        }
+
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+            opacity: 0.5;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--primary);
+            color: white;
+            padding: 14px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 14px;
+            z-index: 3000;
+            opacity: 0;
+            transition: all 0.3s;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+            white-space: nowrap;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* Auth Screen */
+        .auth-screen {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+        }
+
+        .auth-box {
+            background: white;
+            border-radius: 24px;
+            padding: 32px;
+            width: 100%;
+            max-width: 380px;
+            color: var(--text);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .auth-logo {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
+            display: block;
+        }
+
+        /* Action Buttons in List */
+        .action-btns {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .btn-sm {
+            padding: 6px 14px;
+            border: none;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--success);
+            color: var(--success);
+        }
+
+        /* Filter tabs */
+        .filter-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+        }
+
+        .filter-tab {
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 2px solid var(--border);
+            background: white;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+            font-family: inherit;
+            color: var(--text-light);
+        }
+
+        .filter-tab.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        /* Month Selector */
+        .month-selector {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .month-selector button {
+            background: white;
+            border: 2px solid var(--border);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .month-selector span {
+            font-weight: 700;
+            font-size: 16px;
+            color: var(--primary);
+        }
+
+        /* Loading */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .hidden { display: none !important; }
+    </style>
+<base target="_blank">
+</head>
+<body>
+
+<!-- Auth Screen -->
+<div id="authScreen" class="auth-screen">
+    <div class="auth-box">
+        <img src="LOGO.png" alt="Logo" class="auth-logo" onerror="this.style.display='none'">
+        <h2 style="text-align:center;margin-bottom:8px;color:var(--primary);">My Money Manager</h2>
+        <p style="text-align:center;color:var(--text-light);font-size:13px;margin-bottom:24px;">உங்கள் பணத்தை ஸ்மார்ட்டாக மேலாண்மை செய்யுங்கள்</p>
+
+        <div class="form-group">
+            <label>Email</label>
+            <input type="email" id="authEmail" placeholder="your@email.com">
+        </div>
+        <div class="form-group">
+            <label>Password</label>
+            <input type="password" id="authPassword" placeholder="••••••••">
+        </div>
+        <button class="btn btn-primary" onclick="login()" id="loginBtn">Login / Register</button>
+        <p style="text-align:center;margin-top:16px;font-size:12px;color:var(--text-light);">
+            No account? Enter email & password and click Login to auto-register
+        </p>
+    </div>
+</div>
+
+<!-- Main App -->
+<div id="mainApp" class="hidden">
+    <!-- Header -->
+    <div class="header">
+        <div class="logo-container">
+            <img src="LOGO.png" alt="Logo" onerror="this.innerHTML='&#128176;'">
+        </div>
+        <h1>My Money Manager</h1>
+        <p>Smart Finance Tracker</p>
+        <select class="currency-select" id="currencySelect" onchange="changeCurrency()">
+            <option value="LKR">🇱🇰 LKR (Rs)</option>
+            <option value="SAR">🇸🇦 SAR (﷼)</option>
+            <option value="QAR">🇶🇦 QAR (﷼)</option>
+            <option value="KWD">🇰🇼 KWD (د.ك)</option>
+            <option value="AED">🇦🇪 AED (د.إ)</option>
+        </select>
+    </div>
+
+    <div class="container">
+        <!-- DASHBOARD PAGE -->
+        <div id="pageDashboard" class="page active">
+            <div class="card-grid">
+                <div class="card card-income">
+                    <div class="card-label">📥 Income (வருமானம்)</div>
+                    <div class="card-value" id="dashIncome">0</div>
+                    <div class="card-sub" id="dashIncomeCount">0 transactions</div>
+                </div>
+                <div class="card card-expense">
+                    <div class="card-label">📤 Expense (செலவு)</div>
+                    <div class="card-value" id="dashExpense">0</div>
+                    <div class="card-sub" id="dashExpenseCount">0 transactions</div>
+                </div>
+                <div class="card card-savings card-full">
+                    <div class="card-label">💎 Savings (மிச்சம்)</div>
+                    <div class="card-value" id="dashSavings">0</div>
+                    <div class="card-sub" id="currentMonth">This Month</div>
+                </div>
+            </div>
+
+            <div class="card card-loan" style="margin-bottom:16px;">
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                    <div>
+                        <div class="card-label">🤝 Loan Summary</div>
+                        <div style="font-size:13px;opacity:0.9;margin-top:4px;">
+                            Given: <span id="loanGivenTotal">0</span> | Taken: <span id="loanTakenTotal">0</span>
+                        </div>
+                    </div>
+                    <div style="font-size:28px;">📝</div>
+                </div>
+            </div>
+
+            <div class="summary-box">
+                <div class="summary-row">
+                    <span>💰 Total You Gave (Loan)</span>
+                    <span style="color:var(--danger);font-weight:700;" id="summaryGiven">0</span>
+                </div>
+                <div class="summary-row">
+                    <span>📥 Total You Received (Loan)</span>
+                    <span style="color:var(--success);font-weight:700;" id="summaryReceived">0</span>
+                </div>
+                <div class="summary-row">
+                    <span>🏦 Net Loan Balance</span>
+                    <span id="summaryNet">0</span>
+                </div>
+                <div class="summary-row">
+                    <span>📊 Overall Balance</span>
+                    <span id="summaryOverall">0</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- INCOME PAGE -->
+        <div id="pageIncome" class="page">
+            <div class="month-selector">
+                <button onclick="changeMonth(-1)">◀</button>
+                <span id="incomeMonth">July 2026</span>
+                <button onclick="changeMonth(1)">▶</button>
+            </div>
+
+            <button class="btn btn-success" onclick="openModal('incomeModal')" style="margin-bottom:16px;">+ Add Income</button>
+
+            <div id="incomeList"></div>
+        </div>
+
+        <!-- EXPENSE PAGE -->
+        <div id="pageExpense" class="page">
+            <div class="month-selector">
+                <button onclick="changeMonth(-1)">◀</button>
+                <span id="expenseMonth">July 2026</span>
+                <button onclick="changeMonth(1)">▶</button>
+            </div>
+
+            <button class="btn btn-danger" onclick="openModal('expenseModal')" style="margin-bottom:16px;">+ Add Expense</button>
+
+            <div id="expenseList"></div>
+        </div>
+
+        <!-- LOAN PAGE -->
+        <div id="pageLoan" class="page">
+            <div class="filter-tabs">
+                <button class="filter-tab active" onclick="filterLoan('all')">All</button>
+                <button class="filter-tab" onclick="filterLoan('given')">Given (கொடுத்தது)</button>
+                <button class="filter-tab" onclick="filterLoan('taken')">Taken (வாங்கியது)</button>
+                <button class="filter-tab" onclick="filterLoan('pending')">Pending</button>
+            </div>
+
+            <button class="btn btn-warning" onclick="openModal('loanModal')" style="margin-bottom:16px;">+ Add Loan</button>
+
+            <div id="loanList"></div>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <div class="bottom-nav">
+        <button class="nav-item active" onclick="showPage('dashboard')">
+            <span class="nav-icon">🏠</span>
+            Home
+        </button>
+        <button class="nav-item" onclick="showPage('income')">
+            <span class="nav-icon">💵</span>
+            Income
+        </button>
+        <button class="nav-item" onclick="showPage('expense')">
+            <span class="nav-icon">💸</span>
+            Expense
+        </button>
+        <button class="nav-item" onclick="showPage('loan')">
+            <span class="nav-icon">📝</span>
+            Loan
+        </button>
+    </div>
+</div>
+
+<!-- MODALS -->
+
+<!-- Income Modal -->
+<div class="modal-overlay" id="incomeModal">
+    <div class="modal">
+        <div class="modal-header">
+            <div class="modal-title">💵 Add Income</div>
+            <button class="modal-close" onclick="closeModal('incomeModal')">&times;</button>
+        </div>
+        <div class="form-group">
+            <label>Source (வருமானம் மூலம்)</label>
+            <input type="text" id="incomeSource" placeholder="Salary, Business, etc.">
+        </div>
+        <div class="form-group">
+            <label>Amount (தொகை)</label>
+            <input type="number" id="incomeAmount" placeholder="0.00">
+        </div>
+        <div class="form-group">
+            <label>Date (தேதி)</label>
+            <input type="date" id="incomeDate">
+        </div>
+        <div class="form-group">
+            <label>Notes (குறிப்புகள்)</label>
+            <textarea id="incomeNotes" placeholder="Optional..."></textarea>
+        </div>
+        <button class="btn btn-success" onclick="addIncome()">Save Income</button>
+    </div>
+</div>
+
+<!-- Expense Modal -->
+<div class="modal-overlay" id="expenseModal">
+    <div class="modal">
+        <div class="modal-header">
+            <div class="modal-title">💸 Add Expense</div>
+            <button class="modal-close" onclick="closeModal('expenseModal')">&times;</button>
+        </div>
+        <div class="form-group">
+            <label>Category (வகை)</label>
+            <select id="expenseCategory">
+                <option value="Food">🍔 Food (உணவு)</option>
+                <option value="Transport">🚗 Transport (போக்குவரத்து)</option>
+                <option value="Shopping">🛍️ Shopping (ஷாப்பிங்)</option>
+                <option value="Bills">💡 Bills (கட்டணங்கள்)</option>
+                <option value="Medical">🏥 Medical (மருத்துவம்)</option>
+                <option value="Education">📚 Education (கல்வி)</option>
+                <option value="Entertainment">🎬 Entertainment (பொழுதுபோக்கு)</option>
+                <option value="Other">📦 Other (மற்றவை)</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Description (விவரம்)</label>
+            <input type="text" id="expenseDesc" placeholder="What did you spend on?">
+        </div>
+        <div class="form-group">
+            <label>Amount (தொகை)</label>
+            <input type="number" id="expenseAmount" placeholder="0.00">
+        </div>
+        <div class="form-group">
+            <label>Date (தேதி)</label>
+            <input type="date" id="expenseDate">
+        </div>
+        <button class="btn btn-danger" onclick="addExpense()">Save Expense</button>
+    </div>
+</div>
+
+<!-- Loan Modal -->
+<div class="modal-overlay" id="loanModal">
+    <div class="modal">
+        <div class="modal-header">
+            <div class="modal-title">📝 Add Loan</div>
+            <button class="modal-close" onclick="closeModal('loanModal')">&times;</button>
+        </div>
+        <div class="form-group">
+            <label>Type (வகை)</label>
+            <select id="loanType">
+                <option value="given">📤 I Gave (கொடுத்தேன்)</option>
+                <option value="taken">📥 I Took (வாங்கினேன்)</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Person Name (பெயர்)</label>
+            <input type="text" id="loanPerson" placeholder="Who?">
+        </div>
+        <div class="form-group">
+            <label>Amount (தொகை)</label>
+            <input type="number" id="loanAmount" placeholder="0.00">
+        </div>
+        <div class="form-group">
+            <label>Reason (காரணம்)</label>
+            <input type="text" id="loanReason" placeholder="Why?">
+        </div>
+        <div class="form-group">
+            <label>Date Given/Taken (தேதி)</label>
+            <input type="date" id="loanDate">
+        </div>
+        <div class="form-group">
+            <label>Expected Return Date (திருப்பி கொடுக்க வேண்டிய தேதி)</label>
+            <input type="date" id="loanReturnDate">
+        </div>
+        <button class="btn btn-warning" onclick="addLoan()">Save Loan</button>
+    </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ===================== FIREBASE CONFIG =====================
+// IMPORTANT: Replace with your Firebase config from Firebase Console
+const firebaseConfig = {
+  apiKey: "AIzaSyDPdzf3tvImJCa0fffG2HUOW0O6w_KtMZw",
+  authDomain: "personal-manager-54df3.firebaseapp.com",
+  projectId: "personal-manager-54df3",
+  storageBucket: "personal-manager-54df3.firebasestorage.app",
+  messagingSenderId: "933455390873",
+  appId: "1:933455390873:web:a3b5cb147fbd0349d5b008"
+};
+
+// Initialize Firebase
+let app, db, auth;
+try {
+    app = firebase.initializeApp(firebaseConfig);
+    db = firebase.database();
+    auth = firebase.auth();
+} catch(e) {
+    console.log("Firebase not configured yet");
+}
+
+// ===================== STATE =====================
+let currentUser = null;
+let currentCurrency = 'LKR';
+let currentMonth = new Date();
+let loanFilter = 'all';
+
+const currencySymbols = {
+    LKR: 'Rs',
+    SAR: '﷼',
+    QAR: '﷼',
+    KWD: 'د.ك',
+    AED: 'د.إ'
+};
+
+const currencyNames = {
+    LKR: 'Sri Lankan Rupee',
+    SAR: 'Saudi Riyal',
+    QAR: 'Qatari Riyal',
+    KWD: 'Kuwaiti Dinar',
+    AED: 'UAE Dirham'
+};
+
+// ===================== AUTH =====================
+function login() {
+    const email = document.getElementById('authEmail').value;
+    const password = document.getElementById('authPassword').value;
+
+    if(!email || !password) {
+        showToast('Please enter email and password');
+        return;
+    }
+
+    const btn = document.getElementById('loginBtn');
+    btn.innerHTML = '<span class="loading"></span>';
+
+    auth.signInWithEmailAndPassword(email, password)
+        .catch(() => auth.createUserWithEmailAndPassword(email, password))
+        .then(userCredential => {
+            currentUser = userCredential.user;
+            showMainApp();
+            showToast('Welcome! 🎉');
+        })
+        .catch(err => {
+            showToast(err.message);
+            btn.innerHTML = 'Login / Register';
+        });
+}
+
+function showMainApp() {
+    document.getElementById('authScreen').classList.add('hidden');
+    document.getElementById('mainApp').classList.remove('hidden');
+    loadAllData();
+}
+
+// Check auth state
+if(auth) {
+    auth.onAuthStateChanged(user => {
+        if(user) {
+            currentUser = user;
+            showMainApp();
+        }
+    });
+}
+
+// ===================== NAVIGATION =====================
+function showPage(page) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+
+    document.getElementById('page' + page.charAt(0).toUpperCase() + page.slice(1)).classList.add('active');
+    event.target.closest('.nav-item').classList.add('active');
+
+    if(page === 'income' || page === 'expense') {
+        updateMonthDisplay();
+    }
+    if(page === 'loan') {
+        renderLoans();
+    }
+}
+
+// ===================== CURRENCY =====================
+function changeCurrency() {
+    currentCurrency = document.getElementById('currencySelect').value;
+    loadAllData();
+    showToast('Currency: ' + currencyNames[currentCurrency]);
+}
+
+function formatMoney(amount) {
+    const symbol = currencySymbols[currentCurrency] || currentCurrency;
+    return symbol + ' ' + parseFloat(amount).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+}
+
+// ===================== MONTH HANDLING =====================
+function changeMonth(delta) {
+    currentMonth.setMonth(currentMonth.getMonth() + delta);
+    updateMonthDisplay();
+    loadAllData();
+}
+
+function updateMonthDisplay() {
+    const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+    const str = months[currentMonth.getMonth()] + ' ' + currentMonth.getFullYear();
+    document.getElementById('incomeMonth').textContent = str;
+    document.getElementById('expenseMonth').textContent = str;
+    document.getElementById('currentMonth').textContent = str;
+}
+
+function getMonthKey() {
+    return currentMonth.getFullYear() + '-' + String(currentMonth.getMonth()+1).padStart(2,'0');
+}
+
+// ===================== MODALS =====================
+function openModal(id) {
+    document.getElementById(id).classList.add('active');
+    // Set today's date
+    const today = new Date().toISOString().split('T')[0];
+    const modal = document.getElementById(id);
+    modal.querySelectorAll('input[type="date"]').forEach(input => {
+        if(!input.value) input.value = today;
+    });
+}
+
+function closeModal(id) {
+    document.getElementById(id).classList.remove('active');
+    document.getElementById(id).querySelectorAll('input, textarea, select').forEach(el => {
+        if(el.tagName !== 'SELECT') el.value = '';
+    });
+}
+
+// Close modal on overlay click
+document.querySelectorAll('.modal-overlay').forEach(overlay => {
+    overlay.addEventListener('click', e => {
+        if(e.target === overlay) overlay.classList.remove('active');
+    });
+});
+
+// ===================== TOAST =====================
+function showToast(msg) {
+    const toast = document.getElementById('toast');
+    toast.textContent = msg;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 3000);
+}
+
+// ===================== DATA OPERATIONS =====================
+function getUserRef(path) {
+    if(!currentUser) return null;
+    return db.ref('users/' + currentUser.uid + '/' + path);
+}
+
+// ----- INCOME -----
+function addIncome() {
+    const source = document.getElementById('incomeSource').value;
+    const amount = parseFloat(document.getElementById('incomeAmount').value);
+    const date = document.getElementById('incomeDate').value;
+    const notes = document.getElementById('incomeNotes').value;
+
+    if(!source || !amount || !date) {
+        showToast('Please fill all fields');
+        return;
+    }
+
+    const data = {
+        source, amount, date, notes,
+        currency: currentCurrency,
+        timestamp: Date.now(),
+        monthKey: date.substring(0,7)
+    };
+
+    const ref = getUserRef('income');
+    if(ref) {
+        ref.push(data).then(() => {
+            showToast('Income added! 💵');
+            closeModal('incomeModal');
+            loadAllData();
+        });
+    } else {
+        // Local fallback
+        saveLocal('income', data);
+        showToast('Income saved locally');
+        closeModal('incomeModal');
+        loadAllData();
+    }
+}
+
+// ----- EXPENSE -----
+function addExpense() {
+    const category = document.getElementById('expenseCategory').value;
+    const desc = document.getElementById('expenseDesc').value;
+    const amount = parseFloat(document.getElementById('expenseAmount').value);
+    const date = document.getElementById('expenseDate').value;
+
+    if(!desc || !amount || !date) {
+        showToast('Please fill all fields');
+        return;
+    }
+
+    const data = {
+        category, desc, amount, date,
+        currency: currentCurrency,
+        timestamp: Date.now(),
+        monthKey: date.substring(0,7)
+    };
+
+    const ref = getUserRef('expense');
+    if(ref) {
+        ref.push(data).then(() => {
+            showToast('Expense added! 💸');
+            closeModal('expenseModal');
+            loadAllData();
+        });
+    } else {
+        saveLocal('expense', data);
+        showToast('Expense saved locally');
+        closeModal('expenseModal');
+        loadAllData();
+    }
+}
+
+// ----- LOAN -----
+function addLoan() {
+    const type = document.getElementById('loanType').value;
+    const person = document.getElementById('loanPerson').value;
+    const amount = parseFloat(document.getElementById('loanAmount').value);
+    const reason = document.getElementById('loanReason').value;
+    const date = document.getElementById('loanDate').value;
+    const returnDate = document.getElementById('loanReturnDate').value;
+
+    if(!person || !amount || !date) {
+        showToast('Please fill required fields');
+        return;
+    }
+
+    const data = {
+        type, person, amount, reason, date, returnDate,
+        currency: currentCurrency,
+        status: 'pending',
+        timestamp: Date.now()
+    };
+
+    const ref = getUserRef('loans');
+    if(ref) {
+        ref.push(data).then(() => {
+            showToast('Loan recorded! 📝');
+            closeModal('loanModal');
+            loadAllData();
+        });
+    } else {
+        saveLocal('loans', data);
+        showToast('Loan saved locally');
+        closeModal('loanModal');
+        loadAllData();
+    }
+}
+
+function markLoanPaid(key) {
+    const ref = getUserRef('loans/' + key);
+    if(ref) {
+        ref.update({
+            status: 'paid',
+            paidDate: new Date().toISOString().split('T')[0]
+        }).then(() => {
+            showToast('Marked as paid! ✅');
+            loadAllData();
+        });
+    } else {
+        let loans = JSON.parse(localStorage.getItem('mm_loans') || '[]');
+        const idx = loans.findIndex(l => l.id === key);
+        if(idx >= 0) {
+            loans[idx].status = 'paid';
+            loans[idx].paidDate = new Date().toISOString().split('T')[0];
+            localStorage.setItem('mm_loans', JSON.stringify(loans));
+            showToast('Marked as paid! ✅');
+            loadAllData();
+        }
+    }
+}
+
+function deleteLoan(key) {
+    if(!confirm('Delete this record?')) return;
+    const ref = getUserRef('loans/' + key);
+    if(ref) {
+        ref.remove().then(() => {
+            showToast('Deleted');
+            loadAllData();
+        });
+    } else {
+        let loans = JSON.parse(localStorage.getItem('mm_loans') || '[]');
+        loans = loans.filter(l => l.id !== key);
+        localStorage.setItem('mm_loans', JSON.stringify(loans));
+        showToast('Deleted');
+        loadAllData();
+    }
+}
+
+// ===================== LOCAL STORAGE FALLBACK =====================
+function saveLocal(type, data) {
+    let items = JSON.parse(localStorage.getItem('mm_' + type) || '[]');
+    data.id = Date.now().toString();
+    items.push(data);
+    localStorage.setItem('mm_' + type, JSON.stringify(items));
+}
+
+function getLocal(type) {
+    return JSON.parse(localStorage.getItem('mm_' + type) || '[]');
+}
+
+// ===================== LOAD & RENDER =====================
+function loadAllData() {
+    updateMonthDisplay();
+
+    if(db && currentUser) {
+        loadFromFirebase();
+    } else {
+        loadFromLocal();
+    }
+}
+
+function loadFromFirebase() {
+    const monthKey = getMonthKey();
+
+    // Income
+    getUserRef('income').once('value').then(snap => {
+        const data = snap.val() || {};
+        const items = Object.entries(data).map(([key,val]) => ({...val, key}));
+        renderIncome(items.filter(i => i.monthKey === monthKey && i.currency === currentCurrency));
+        updateDashboard(items, 'income');
+    });
+
+    // Expense
+    getUserRef('expense').once('value').then(snap => {
+        const data = snap.val() || {};
+        const items = Object.entries(data).map(([key,val]) => ({...val, key}));
+        renderExpense(items.filter(i => i.monthKey === monthKey && i.currency === currentCurrency));
+        updateDashboard(items, 'expense');
+    });
+
+    // Loans
+    getUserRef('loans').once('value').then(snap => {
+        const data = snap.val() || {};
+        const items = Object.entries(data).map(([key,val]) => ({...val, key}));
+        renderLoans(items.filter(i => i.currency === currentCurrency));
+        updateLoanSummary(items.filter(i => i.currency === currentCurrency));
+    });
+}
+
+function loadFromLocal() {
+    const monthKey = getMonthKey();
+
+    const income = getLocal('income').filter(i => i.monthKey === monthKey && i.currency === currentCurrency);
+    const expense = getLocal('expense').filter(i => i.monthKey === monthKey && i.currency === currentCurrency);
+    const loans = getLocal('loans').filter(i => i.currency === currentCurrency);
+
+    renderIncome(income.map((i,idx) => ({...i, key: i.id || idx})));
+    renderExpense(expense.map((i,idx) => ({...i, key: i.id || idx})));
+    renderLoans(loans.map((i,idx) => ({...i, key: i.id || idx})));
+
+    updateDashboardLocal(income, expense);
+    updateLoanSummaryLocal(loans);
+}
+
+// ----- RENDER INCOME -----
+function renderIncome(items) {
+    const container = document.getElementById('incomeList');
+    if(items.length === 0) {
+        container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">💵</div><p>No income this month</p></div>';
+        return;
+    }
+
+    items.sort((a,b) => new Date(b.date) - new Date(a.date));
+
+    container.innerHTML = items.map(item => `
+        <div class="list-item">
+            <div class="list-item-left">
+                <div class="list-item-title">${item.source}</div>
+                <div class="list-item-sub">${item.date} ${item.notes ? '| ' + item.notes : ''}</div>
+            </div>
+            <div class="list-item-amount amount-income">+${formatMoney(item.amount)}</div>
+        </div>
+    `).join('');
+}
+
+// ----- RENDER EXPENSE -----
+function renderExpense(items) {
+    const container = document.getElementById('expenseList');
+    if(items.length === 0) {
+        container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">💸</div><p>No expenses this month</p></div>';
+        return;
+    }
+
+    items.sort((a,b) => new Date(b.date) - new Date(a.date));
+
+    container.innerHTML = items.map(item => `
+        <div class="list-item">
+            <div class="list-item-left">
+                <div class="list-item-title">${item.category} - ${item.desc}</div>
+                <div class="list-item-sub">${item.date}</div>
+            </div>
+            <div class="list-item-amount amount-expense">-${formatMoney(item.amount)}</div>
+        </div>
+    `).join('');
+}
+
+// ----- RENDER LOANS -----
+function filterLoan(type) {
+    loanFilter = type;
+    document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+    event.target.classList.add('active');
+    loadAllData();
+}
+
+function renderLoans(items) {
+    const container = document.getElementById('loanList');
+
+    if(!items) {
+        // Called from nav, need to reload
+        if(db && currentUser) {
+            getUserRef('loans').once('value').then(snap => {
+                const data = snap.val() || {};
+                const all = Object.entries(data).map(([key,val]) => ({...val, key})).filter(i => i.currency === currentCurrency);
+                doRenderLoans(all);
+            });
+        } else {
+            doRenderLoans(getLocal('loans').filter(i => i.currency === currentCurrency).map((i,idx) => ({...i, key: i.id || idx})));
+        }
+        return;
+    }
+
+    doRenderLoans(items);
+}
+
+function doRenderLoans(items) {
+    const container = document.getElementById('loanList');
+
+    let filtered = items;
+    if(loanFilter === 'given') filtered = items.filter(i => i.type === 'given');
+    if(loanFilter === 'taken') filtered = items.filter(i => i.type === 'taken');
+    if(loanFilter === 'pending') filtered = items.filter(i => i.status === 'pending');
+
+    if(filtered.length === 0) {
+        container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📝</div><p>No loans found</p></div>';
+        return;
+    }
+
+    filtered.sort((a,b) => new Date(b.date) - new Date(a.date));
+
+    container.innerHTML = filtered.map(item => {
+        const isGiven = item.type === 'given';
+        const isPaid = item.status === 'paid';
+        const amountClass = isGiven ? 'amount-loan-given' : 'amount-loan-taken';
+        const sign = isGiven ? '-' : '+';
+        const badge = isPaid ? '<span class="badge badge-success">✅ Paid</span>' : '<span class="badge badge-pending">⏳ Pending</span>';
+
+        let actions = '';
+        if(!isPaid) {
+            actions = `
+                <div class="action-btns">
+                    <button class="btn-sm btn-outline" onclick="markLoanPaid('${item.key}')">✓ Mark Paid</button>
+                    <button class="btn-sm" style="background:#fee2e2;color:#dc2626;" onclick="deleteLoan('${item.key}')">🗑 Delete</button>
+                </div>
+            `;
+        } else {
+            actions = `<div style="font-size:11px;color:var(--success);margin-top:6px;">✅ Paid on ${item.paidDate || 'N/A'}</div>`;
+        }
+
+        return `
+            <div class="list-item" style="flex-direction:column;align-items:flex-start;">
+                <div style="display:flex;justify-content:space-between;width:100%;align-items:center;">
+                    <div class="list-item-left">
+                        <div class="list-item-title">${isGiven ? '📤' : '📥'} ${item.person}</div>
+                        <div class="list-item-sub">${item.reason} | ${item.date}</div>
+                        ${item.returnDate ? `<div class="list-item-sub">Return by: ${item.returnDate}</div>` : ''}
+                        ${badge}
+                    </div>
+                    <div class="list-item-amount ${amountClass}">${sign}${formatMoney(item.amount)}</div>
+                </div>
+                ${actions}
+            </div>
+        `;
+    }).join('');
+}
+
+// ----- UPDATE DASHBOARD -----
+function updateDashboard(items, type) {
+    const monthKey = getMonthKey();
+    const filtered = items.filter(i => i.monthKey === monthKey && i.currency === currentCurrency);
+
+    if(type === 'income') {
+        const total = filtered.reduce((sum, i) => sum + parseFloat(i.amount), 0);
+        document.getElementById('dashIncome').textContent = formatMoney(total);
+        document.getElementById('dashIncomeCount').textContent = filtered.length + ' transactions';
+    } else {
+        const total = filtered.reduce((sum, i) => sum + parseFloat(i.amount), 0);
+        document.getElementById('dashExpense').textContent = formatMoney(total);
+        document.getElementById('dashExpenseCount').textContent = filtered.length + ' transactions';
+    }
+
+    // Calculate savings
+    updateSavings();
+}
+
+function updateDashboardLocal(income, expense) {
+    const incTotal = income.reduce((sum, i) => sum + parseFloat(i.amount), 0);
+    const expTotal = expense.reduce((sum, i) => sum + parseFloat(i.amount), 0);
+
+    document.getElementById('dashIncome').textContent = formatMoney(incTotal);
+    document.getElementById('dashIncomeCount').textContent = income.length + ' transactions';
+    document.getElementById('dashExpense').textContent = formatMoney(expTotal);
+    document.getElementById('dashExpenseCount').textContent = expense.length + ' transactions';
+
+    updateSavings();
+}
+
+function updateSavings() {
+    const incText = document.getElementById('dashIncome').textContent;
+    const expText = document.getElementById('dashExpense').textContent;
+
+    const inc = parseFloat(incText.replace(/[^0-9.-]+/g, '')) || 0;
+    const exp = parseFloat(expText.replace(/[^0-9.-]+/g, '')) || 0;
+
+    document.getElementById('dashSavings').textContent = formatMoney(inc - exp);
+}
+
+// ----- UPDATE LOAN SUMMARY -----
+function updateLoanSummary(items) {
+    const given = items.filter(i => i.type === 'given');
+    const taken = items.filter(i => i.type === 'taken');
+
+    const givenTotal = given.reduce((sum, i) => sum + parseFloat(i.amount), 0);
+    const takenTotal = taken.reduce((sum, i) => sum + parseFloat(i.amount), 0);
+
+    const givenPending = given.filter(i => i.status === 'pending').reduce((sum, i) => sum + parseFloat(i.amount), 0);
+    const takenPending = taken.filter(i => i.status === 'pending').reduce((sum, i) => sum + parseFloat(i.amount), 0);
+
+    document.getElementById('loanGivenTotal').textContent = formatMoney(givenPending);
+    document.getElementById('loanTakenTotal').textContent = formatMoney(takenPending);
+
+    document.getElementById('summaryGiven').textContent = formatMoney(givenTotal);
+    document.getElementById('summaryReceived').textContent = formatMoney(takenTotal);
+    document.getElementById('summaryNet').textContent = formatMoney(givenPending - takenPending);
+
+    // Overall = Savings + (Taken - Given) [if given is money out, taken is money in]
+    const savingsText = document.getElementById('dashSavings').textContent;
+    const savings = parseFloat(savingsText.replace(/[^0-9.-]+/g, '')) || 0;
+    document.getElementById('summaryOverall').textContent = formatMoney(savings + takenPending - givenPending);
+}
+
+function updateLoanSummaryLocal(items) {
+    updateLoanSummary(items);
+}
+
+// ===================== PWA SERVICE WORKER =====================
+if('serviceWorker' in navigator) {
+    const swCode = `
+        self.addEventListener('install', e => {
+            e.waitUntil(self.skipWaiting());
+        });
+        self.addEventListener('activate', e => {
+            e.waitUntil(self.clients.claim());
+        });
+        self.addEventListener('fetch', e => {
+            e.respondWith(fetch(e.request).catch(() => caches.match(e.request)));
+        });
+    `;
+
+    const blob = new Blob([swCode], {type: 'application/javascript'});
+    const swUrl = URL.createObjectURL(blob);
+
+    navigator.serviceWorker.register(swUrl).then(() => {
+        console.log('PWA Service Worker registered');
+    }).catch(err => {
+        console.log('SW registration failed:', err);
+    });
+}
+
+// ===================== INIT =====================
+updateMonthDisplay();
+
+// Demo data for first time users (local only)
+function loadDemoData() {
+    if(!localStorage.getItem('mm_demo_loaded')) {
+        const today = new Date().toISOString().split('T')[0];
+        const monthKey = getMonthKey();
+
+        saveLocal('income', {
+            source: 'Salary', amount: 50000, date: today, notes: 'Monthly salary',
+            currency: 'LKR', timestamp: Date.now(), monthKey
+        });
+        saveLocal('expense', {
+            category: 'Food', desc: 'Groceries', amount: 5000, date: today,
+            currency: 'LKR', timestamp: Date.now(), monthKey
+        });
+        saveLocal('loans', {
+            type: 'given', person: 'Ravi', amount: 10000, reason: 'Emergency', date: today,
+            currency: 'LKR', status: 'pending', timestamp: Date.now()
+        });
+
+        localStorage.setItem('mm_demo_loaded', 'true');
+    }
+}
+
+// Load demo if not logged in
+if(!currentUser) {
+    loadDemoData();
+    loadFromLocal();
+}
+
+// Keyboard shortcuts
+document.addEventListener('keydown', e => {
+    if(e.key === 'Escape') {
+        document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('active'));
+    }
+});
+</script>
+
+</body>
+</html>
