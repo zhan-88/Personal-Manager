@@ -65,6 +65,7 @@
         }
 
         .logo-container img { width: 55px; height: 55px; object-fit: contain; }
+        .logo-container .logo-fallback { font-size: 36px; }
 
         .header h1 { font-size: 20px; margin-bottom: 4px; font-weight: 700; }
         .header p { font-size: 12px; opacity: 0.85; }
@@ -463,7 +464,8 @@
 <!-- Auth Screen -->
 <div id="authScreen" class="auth-screen">
     <div class="auth-box">
-        <img src="LOGO.png" alt="Logo" class="auth-logo" onerror="this.style.display='none'">
+        <img src="LOGO.png" alt="Logo" class="auth-logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+        <div style="text-align:center;font-size:60px;margin-bottom:10px;display:none;">💰</div>
         <h2 style="text-align:center;margin-bottom:8px;color:var(--primary);">My Money Manager</h2>
         <p style="text-align:center;color:var(--text-light);font-size:13px;margin-bottom:24px;">Smart Finance Tracker</p>
 
@@ -479,6 +481,9 @@
         <p style="text-align:center;margin-top:16px;font-size:12px;color:var(--text-light);">
             New user? Just enter email & password and click Login
         </p>
+        <button class="btn" style="margin-top:10px;background:transparent;border:2px solid var(--border);color:var(--text-light);" onclick="skipLogin()">
+            Skip Login (Local Mode)
+        </button>
     </div>
 </div>
 
@@ -487,7 +492,7 @@
     <!-- Header -->
     <div class="header">
         <div class="logo-container">
-            <img src="LOGO.png" alt="Logo" onerror="this.innerHTML='&#128176;'">
+            <img src="LOGO.png" alt="Logo" onerror="this.parentElement.innerHTML='<div class=logo-fallback>💰</div>'">
         </div>
         <h1>My Money Manager</h1>
         <p>Smart Finance Tracker</p>
@@ -505,29 +510,29 @@
         <!-- DASHBOARD PAGE -->
         <div id="pageDashboard" class="page active">
             <div class="card-grid">
-                <div class="card card-income">
+                <div class="card card-income" onclick="showPage('income')">
                     <div class="card-label">📥 Income</div>
-                    <div class="card-value" id="dashIncome">0</div>
+                    <div class="card-value" id="dashIncome">Rs 0.00</div>
                     <div class="card-sub" id="dashIncomeCount">0 transactions</div>
                 </div>
-                <div class="card card-expense">
+                <div class="card card-expense" onclick="showPage('expense')">
                     <div class="card-label">📤 Expense</div>
-                    <div class="card-value" id="dashExpense">0</div>
+                    <div class="card-value" id="dashExpense">Rs 0.00</div>
                     <div class="card-sub" id="dashExpenseCount">0 transactions</div>
                 </div>
                 <div class="card card-savings card-full">
                     <div class="card-label">💎 Savings</div>
-                    <div class="card-value" id="dashSavings">0</div>
+                    <div class="card-value" id="dashSavings">Rs 0.00</div>
                     <div class="card-sub" id="currentMonth">This Month</div>
                 </div>
             </div>
 
-            <div class="card card-loan" style="margin-bottom:16px;">
+            <div class="card card-loan" style="margin-bottom:16px;" onclick="showPage('loan')">
                 <div style="display:flex;justify-content:space-between;align-items:center;">
                     <div>
                         <div class="card-label">🤝 Loan Summary</div>
                         <div style="font-size:13px;opacity:0.9;margin-top:4px;">
-                            Given: <span id="loanGivenTotal">0</span> | Taken: <span id="loanTakenTotal">0</span>
+                            Given: <span id="loanGivenTotal">Rs 0.00</span> | Taken: <span id="loanTakenTotal">Rs 0.00</span>
                         </div>
                     </div>
                     <div style="font-size:28px;">📝</div>
@@ -537,19 +542,19 @@
             <div class="summary-box">
                 <div class="summary-row">
                     <span>💰 Total You Gave (Loan)</span>
-                    <span style="color:var(--danger);font-weight:700;" id="summaryGiven">0</span>
+                    <span style="color:var(--danger);font-weight:700;" id="summaryGiven">Rs 0.00</span>
                 </div>
                 <div class="summary-row">
                     <span>📥 Total You Received (Loan)</span>
-                    <span style="color:var(--success);font-weight:700;" id="summaryReceived">0</span>
+                    <span style="color:var(--success);font-weight:700;" id="summaryReceived">Rs 0.00</span>
                 </div>
                 <div class="summary-row">
                     <span>🏦 Net Loan Balance</span>
-                    <span id="summaryNet">0</span>
+                    <span id="summaryNet">Rs 0.00</span>
                 </div>
                 <div class="summary-row">
                     <span>📊 Overall Balance</span>
-                    <span id="summaryOverall">0</span>
+                    <span id="summaryOverall">Rs 0.00</span>
                 </div>
             </div>
         </div>
@@ -578,11 +583,11 @@
 
         <!-- LOAN PAGE -->
         <div id="pageLoan" class="page">
-            <div class="filter-tabs">
-                <button class="filter-tab active" onclick="filterLoan('all')">All</button>
-                <button class="filter-tab" onclick="filterLoan('given')">Given</button>
-                <button class="filter-tab" onclick="filterLoan('taken')">Taken</button>
-                <button class="filter-tab" onclick="filterLoan('pending')">Pending</button>
+            <div class="filter-tabs" id="loanFilterTabs">
+                <button class="filter-tab active" data-filter="all" onclick="filterLoan(this, 'all')">All</button>
+                <button class="filter-tab" data-filter="given" onclick="filterLoan(this, 'given')">Given</button>
+                <button class="filter-tab" data-filter="taken" onclick="filterLoan(this, 'taken')">Taken</button>
+                <button class="filter-tab" data-filter="pending" onclick="filterLoan(this, 'pending')">Pending</button>
             </div>
             <button class="btn btn-warning" onclick="openModal('loanModal')" style="margin-bottom:16px;">+ Add Loan</button>
             <div id="loanList"></div>
@@ -591,23 +596,23 @@
 
     <!-- Bottom Navigation -->
     <div class="bottom-nav">
-        <button class="nav-item active" onclick="showPage('dashboard')">
+        <button class="nav-item active" data-page="dashboard" onclick="showPage('dashboard', this)">
             <span class="nav-icon">🏠</span>Home
         </button>
-        <button class="nav-item" onclick="showPage('income')">
+        <button class="nav-item" data-page="income" onclick="showPage('income', this)">
             <span class="nav-icon">💵</span>Income
         </button>
-        <button class="nav-item" onclick="showPage('expense')">
+        <button class="nav-item" data-page="expense" onclick="showPage('expense', this)">
             <span class="nav-icon">💸</span>Expense
         </button>
-        <button class="nav-item" onclick="showPage('loan')">
+        <button class="nav-item" data-page="loan" onclick="showPage('loan', this)">
             <span class="nav-icon">📝</span>Loan
         </button>
     </div>
 </div>
 
 <!-- MODALS -->
-<div class="modal-overlay" id="incomeModal">
+<div class="modal-overlay" id="incomeModal" onclick="closeModalOnOverlay(event, 'incomeModal')">
     <div class="modal">
         <div class="modal-header">
             <div class="modal-title">💵 Add Income</div>
@@ -619,7 +624,7 @@
         </div>
         <div class="form-group">
             <label>Amount (<span class="currency-label">Rs</span>)</label>
-            <input type="number" id="incomeAmount" placeholder="0.00">
+            <input type="number" id="incomeAmount" placeholder="0.00" step="0.01">
         </div>
         <div class="form-group">
             <label>Date</label>
@@ -633,7 +638,7 @@
     </div>
 </div>
 
-<div class="modal-overlay" id="expenseModal">
+<div class="modal-overlay" id="expenseModal" onclick="closeModalOnOverlay(event, 'expenseModal')">
     <div class="modal">
         <div class="modal-header">
             <div class="modal-title">💸 Add Expense</div>
@@ -658,7 +663,7 @@
         </div>
         <div class="form-group">
             <label>Amount (<span class="currency-label">Rs</span>)</label>
-            <input type="number" id="expenseAmount" placeholder="0.00">
+            <input type="number" id="expenseAmount" placeholder="0.00" step="0.01">
         </div>
         <div class="form-group">
             <label>Date</label>
@@ -668,7 +673,7 @@
     </div>
 </div>
 
-<div class="modal-overlay" id="loanModal">
+<div class="modal-overlay" id="loanModal" onclick="closeModalOnOverlay(event, 'loanModal')">
     <div class="modal">
         <div class="modal-header">
             <div class="modal-title">📝 Add Loan</div>
@@ -687,7 +692,7 @@
         </div>
         <div class="form-group">
             <label>Amount (<span class="currency-label">Rs</span>)</label>
-            <input type="number" id="loanAmount" placeholder="0.00">
+            <input type="number" id="loanAmount" placeholder="0.00" step="0.01">
         </div>
         <div class="form-group">
             <label>Reason</label>
@@ -729,14 +734,13 @@ try {
 
 // ===================== CURRENCY CONFIGURATION =====================
 const currencyConfig = {
-    LKR: { symbol: 'Rs', name: 'Sri Lankan Rupee', flag: '🇱🇰', locale: 'ta-LK' },
-    SAR: { symbol: '﷼', name: 'Saudi Riyal', flag: '🇸🇦', locale: 'ar-SA' },
-    QAR: { symbol: '﷼', name: 'Qatari Riyal', flag: '🇶🇦', locale: 'ar-QA' },
-    KWD: { symbol: 'د.ك', name: 'Kuwaiti Dinar', flag: '🇰🇼', locale: 'ar-KW' },
-    AED: { symbol: 'د.إ', name: 'UAE Dirham', flag: '🇦🇪', locale: 'ar-AE' }
+    LKR: { symbol: 'Rs', name: 'Sri Lankan Rupee', flag: '🇱🇰' },
+    SAR: { symbol: '﷼', name: 'Saudi Riyal', flag: '🇸🇦' },
+    QAR: { symbol: '﷼', name: 'Qatari Riyal', flag: '🇶🇦' },
+    KWD: { symbol: 'د.ك', name: 'Kuwaiti Dinar', flag: '🇰🇼' },
+    AED: { symbol: 'د.إ', name: 'UAE Dirham', flag: '🇦🇪' }
 };
 
-// Timezone to Currency mapping
 const timezoneToCurrency = {
     'Asia/Colombo': 'LKR',
     'Asia/Riyadh': 'SAR',
@@ -747,7 +751,6 @@ const timezoneToCurrency = {
     'Asia/Bahrain': 'AED'
 };
 
-// Country code to Currency mapping (fallback)
 const countryToCurrency = {
     'LK': 'LKR', 'SA': 'SAR', 'QA': 'QAR', 'KW': 'KWD', 'AE': 'AED',
     'OM': 'AED', 'BH': 'AED', 'IN': 'LKR'
@@ -757,10 +760,10 @@ let currentCurrency = 'LKR';
 let currentUser = null;
 let currentMonth = new Date();
 let loanFilter = 'all';
+let isLocalMode = false;
 
 // ===================== AUTO DETECT CURRENCY =====================
 function detectCurrency() {
-    // 1. Check if user previously selected a currency
     const savedCurrency = localStorage.getItem('mm_currency');
     if(savedCurrency && currencyConfig[savedCurrency]) {
         currentCurrency = savedCurrency;
@@ -769,19 +772,17 @@ function detectCurrency() {
         return;
     }
 
-    // 2. Try timezone detection
     try {
         const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
         if(timezoneToCurrency[timezone]) {
             currentCurrency = timezoneToCurrency[timezone];
             updateCurrencyUI();
-            showDetectBadge('🌍 Auto: ' + currencyConfig[currentCurrency].name + ' (' + timezone + ')');
+            showDetectBadge('🌍 Auto: ' + currencyConfig[currentCurrency].name);
             saveCurrencyPreference();
             return;
         }
     } catch(e) {}
 
-    // 3. Try navigator.language detection
     try {
         const lang = navigator.language || navigator.userLanguage;
         const country = lang.split('-')[1];
@@ -794,7 +795,6 @@ function detectCurrency() {
         }
     } catch(e) {}
 
-    // 4. Default to LKR
     currentCurrency = 'LKR';
     updateCurrencyUI();
     showDetectBadge('📍 Default: Sri Lankan Rupee');
@@ -803,6 +803,7 @@ function detectCurrency() {
 
 function showDetectBadge(text) {
     const badge = document.getElementById('autoDetectBadge');
+    if(!badge) return;
     badge.textContent = text;
     badge.style.opacity = '1';
     setTimeout(() => {
@@ -815,26 +816,24 @@ function updateCurrencyUI() {
     const select = document.getElementById('currencySelect');
     if(select) select.value = currentCurrency;
 
-    // Update all currency labels in modals
     document.querySelectorAll('.currency-label').forEach(el => {
         el.textContent = currencyConfig[currentCurrency].symbol;
     });
 
-    // Update document title
     document.title = 'My Money Manager - ' + currencyConfig[currentCurrency].name;
 }
 
 function saveCurrencyPreference() {
     localStorage.setItem('mm_currency', currentCurrency);
-
-    // Also save to Firebase if logged in
     if(db && currentUser) {
         db.ref('users/' + currentUser.uid + '/settings/currency').set(currentCurrency);
     }
 }
 
 function changeCurrency() {
-    const newCurrency = document.getElementById('currencySelect').value;
+    const select = document.getElementById('currencySelect');
+    if(!select) return;
+    const newCurrency = select.value;
     if(newCurrency === currentCurrency) return;
 
     currentCurrency = newCurrency;
@@ -846,19 +845,34 @@ function changeCurrency() {
 
 function formatMoney(amount) {
     const symbol = currencyConfig[currentCurrency].symbol;
-    return symbol + ' ' + parseFloat(amount).toLocaleString('en-US', {
+    return symbol + ' ' + parseFloat(amount || 0).toLocaleString('en-US', {
         minimumFractionDigits: 2,
         maximumFractionDigits: 2
     });
 }
 
 // ===================== AUTH =====================
+function skipLogin() {
+    isLocalMode = true;
+    document.getElementById('authScreen').classList.add('hidden');
+    document.getElementById('mainApp').classList.remove('hidden');
+    detectCurrency();
+    loadDemoData();
+    loadAllData();
+    showToast('Local Mode - Data saved on this device');
+}
+
 function login() {
     const email = document.getElementById('authEmail').value;
     const password = document.getElementById('authPassword').value;
 
     if(!email || !password) {
         showToast('Please enter email and password');
+        return;
+    }
+
+    if(!auth) {
+        showToast('Firebase not configured. Use Skip Login.');
         return;
     }
 
@@ -882,19 +896,21 @@ function showMainApp() {
     document.getElementById('authScreen').classList.add('hidden');
     document.getElementById('mainApp').classList.remove('hidden');
 
-    // Load user's saved currency from Firebase
     if(db && currentUser) {
         db.ref('users/' + currentUser.uid + '/settings/currency').once('value').then(snap => {
             const saved = snap.val();
             if(saved && currencyConfig[saved]) {
                 currentCurrency = saved;
                 localStorage.setItem('mm_currency', saved);
-                updateCurrencyUI();
-                showDetectBadge('☁️ Cloud: ' + currencyConfig[saved].name);
             }
+            detectCurrency();
+            loadAllData();
+        }).catch(() => {
+            detectCurrency();
             loadAllData();
         });
     } else {
+        detectCurrency();
         loadAllData();
     }
 }
@@ -909,12 +925,22 @@ if(auth) {
 }
 
 // ===================== NAVIGATION =====================
-function showPage(page) {
+function showPage(page, element) {
+    // Hide all pages
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
 
-    document.getElementById('page' + page.charAt(0).toUpperCase() + page.slice(1)).classList.add('active');
-    event.target.closest('.nav-item').classList.add('active');
+    // Show selected page
+    const pageEl = document.getElementById('page' + page.charAt(0).toUpperCase() + page.slice(1));
+    if(pageEl) pageEl.classList.add('active');
+
+    // Update nav items
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    if(element) {
+        element.classList.add('active');
+    } else {
+        const navBtn = document.querySelector('.nav-item[data-page="' + page + '"]');
+        if(navBtn) navBtn.classList.add('active');
+    }
 
     if(page === 'income' || page === 'expense') updateMonthDisplay();
     if(page === 'loan') renderLoans();
@@ -930,9 +956,14 @@ function changeMonth(delta) {
 function updateMonthDisplay() {
     const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
     const str = months[currentMonth.getMonth()] + ' ' + currentMonth.getFullYear();
-    document.getElementById('incomeMonth').textContent = str;
-    document.getElementById('expenseMonth').textContent = str;
-    document.getElementById('currentMonth').textContent = str;
+
+    const incMonth = document.getElementById('incomeMonth');
+    const expMonth = document.getElementById('expenseMonth');
+    const curMonth = document.getElementById('currentMonth');
+
+    if(incMonth) incMonth.textContent = str;
+    if(expMonth) expMonth.textContent = str;
+    if(curMonth) curMonth.textContent = str;
 }
 
 function getMonthKey() {
@@ -941,34 +972,37 @@ function getMonthKey() {
 
 // ===================== MODALS =====================
 function openModal(id) {
-    document.getElementById(id).classList.add('active');
-    const today = new Date().toISOString().split('T')[0];
     const modal = document.getElementById(id);
+    if(!modal) return;
+    modal.classList.add('active');
+
+    const today = new Date().toISOString().split('T')[0];
     modal.querySelectorAll('input[type="date"]').forEach(input => {
         if(!input.value) input.value = today;
     });
-    // Update currency labels
+
     modal.querySelectorAll('.currency-label').forEach(el => {
         el.textContent = currencyConfig[currentCurrency].symbol;
     });
 }
 
 function closeModal(id) {
-    document.getElementById(id).classList.remove('active');
-    document.getElementById(id).querySelectorAll('input, textarea, select').forEach(el => {
-        if(el.tagName !== 'SELECT') el.value = '';
-    });
+    const modal = document.getElementById(id);
+    if(!modal) return;
+    modal.classList.remove('active');
+    modal.querySelectorAll('input, textarea').forEach(el => el.value = '');
 }
 
-document.querySelectorAll('.modal-overlay').forEach(overlay => {
-    overlay.addEventListener('click', e => {
-        if(e.target === overlay) overlay.classList.remove('active');
-    });
-});
+function closeModalOnOverlay(event, id) {
+    if(event.target.id === id) {
+        closeModal(id);
+    }
+}
 
 // ===================== TOAST =====================
 function showToast(msg) {
     const toast = document.getElementById('toast');
+    if(!toast) return;
     toast.textContent = msg;
     toast.classList.add('show');
     setTimeout(() => toast.classList.remove('show'), 3000);
@@ -976,18 +1010,18 @@ function showToast(msg) {
 
 // ===================== DATA OPERATIONS =====================
 function getUserRef(path) {
-    if(!currentUser) return null;
+    if(!currentUser || !db) return null;
     return db.ref('users/' + currentUser.uid + '/' + path);
 }
 
 function addIncome() {
-    const source = document.getElementById('incomeSource').value;
+    const source = document.getElementById('incomeSource').value.trim();
     const amount = parseFloat(document.getElementById('incomeAmount').value);
     const date = document.getElementById('incomeDate').value;
-    const notes = document.getElementById('incomeNotes').value;
+    const notes = document.getElementById('incomeNotes').value.trim();
 
-    if(!source || !amount || !date) {
-        showToast('Please fill all fields');
+    if(!source || !amount || amount <= 0 || !date) {
+        showToast('Please fill all fields correctly');
         return;
     }
 
@@ -1004,7 +1038,7 @@ function addIncome() {
             showToast('Income added! 💵');
             closeModal('incomeModal');
             loadAllData();
-        });
+        }).catch(err => showToast('Error: ' + err.message));
     } else {
         saveLocal('income', data);
         showToast('Income saved locally');
@@ -1015,12 +1049,12 @@ function addIncome() {
 
 function addExpense() {
     const category = document.getElementById('expenseCategory').value;
-    const desc = document.getElementById('expenseDesc').value;
+    const desc = document.getElementById('expenseDesc').value.trim();
     const amount = parseFloat(document.getElementById('expenseAmount').value);
     const date = document.getElementById('expenseDate').value;
 
-    if(!desc || !amount || !date) {
-        showToast('Please fill all fields');
+    if(!desc || !amount || amount <= 0 || !date) {
+        showToast('Please fill all fields correctly');
         return;
     }
 
@@ -1037,7 +1071,7 @@ function addExpense() {
             showToast('Expense added! 💸');
             closeModal('expenseModal');
             loadAllData();
-        });
+        }).catch(err => showToast('Error: ' + err.message));
     } else {
         saveLocal('expense', data);
         showToast('Expense saved locally');
@@ -1048,13 +1082,13 @@ function addExpense() {
 
 function addLoan() {
     const type = document.getElementById('loanType').value;
-    const person = document.getElementById('loanPerson').value;
+    const person = document.getElementById('loanPerson').value.trim();
     const amount = parseFloat(document.getElementById('loanAmount').value);
-    const reason = document.getElementById('loanReason').value;
+    const reason = document.getElementById('loanReason').value.trim();
     const date = document.getElementById('loanDate').value;
     const returnDate = document.getElementById('loanReturnDate').value;
 
-    if(!person || !amount || !date) {
+    if(!person || !amount || amount <= 0 || !date) {
         showToast('Please fill required fields');
         return;
     }
@@ -1072,7 +1106,7 @@ function addLoan() {
             showToast('Loan recorded! 📝');
             closeModal('loanModal');
             loadAllData();
-        });
+        }).catch(err => showToast('Error: ' + err.message));
     } else {
         saveLocal('loans', data);
         showToast('Loan saved locally');
@@ -1090,7 +1124,7 @@ function markLoanPaid(key) {
         }).then(() => {
             showToast('Marked as paid! ✅');
             loadAllData();
-        });
+        }).catch(err => showToast('Error: ' + err.message));
     } else {
         let loans = JSON.parse(localStorage.getItem('mm_loans') || '[]');
         const idx = loans.findIndex(l => l.id === key);
@@ -1111,7 +1145,7 @@ function deleteLoan(key) {
         ref.remove().then(() => {
             showToast('Deleted');
             loadAllData();
-        });
+        }).catch(err => showToast('Error: ' + err.message));
     } else {
         let loans = JSON.parse(localStorage.getItem('mm_loans') || '[]');
         loans = loans.filter(l => l.id !== key);
@@ -1124,7 +1158,7 @@ function deleteLoan(key) {
 // ===================== LOCAL STORAGE =====================
 function saveLocal(type, data) {
     let items = JSON.parse(localStorage.getItem('mm_' + type) || '[]');
-    data.id = Date.now().toString();
+    data.id = Date.now().toString() + Math.random().toString(36).substr(2, 5);
     items.push(data);
     localStorage.setItem('mm_' + type, JSON.stringify(items));
 }
@@ -1151,21 +1185,21 @@ function loadFromFirebase() {
         const items = Object.entries(data).map(([key,val]) => ({...val, key}));
         renderIncome(items.filter(i => i.monthKey === monthKey && i.currency === currentCurrency));
         updateDashboard(items, 'income');
-    });
+    }).catch(() => loadFromLocal());
 
     getUserRef('expense').once('value').then(snap => {
         const data = snap.val() || {};
         const items = Object.entries(data).map(([key,val]) => ({...val, key}));
         renderExpense(items.filter(i => i.monthKey === monthKey && i.currency === currentCurrency));
         updateDashboard(items, 'expense');
-    });
+    }).catch(() => {});
 
     getUserRef('loans').once('value').then(snap => {
         const data = snap.val() || {};
         const items = Object.entries(data).map(([key,val]) => ({...val, key}));
         renderLoans(items.filter(i => i.currency === currentCurrency));
         updateLoanSummary(items.filter(i => i.currency === currentCurrency));
-    });
+    }).catch(() => {});
 }
 
 function loadFromLocal() {
@@ -1186,6 +1220,7 @@ function loadFromLocal() {
 // ===================== RENDER FUNCTIONS =====================
 function renderIncome(items) {
     const container = document.getElementById('incomeList');
+    if(!container) return;
     if(items.length === 0) {
         container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">💵</div><p>No income this month</p></div>';
         return;
@@ -1194,8 +1229,8 @@ function renderIncome(items) {
     container.innerHTML = items.map(item => `
         <div class="list-item">
             <div class="list-item-left">
-                <div class="list-item-title">${item.source}</div>
-                <div class="list-item-sub">${item.date} ${item.notes ? '| ' + item.notes : ''}</div>
+                <div class="list-item-title">${escapeHtml(item.source)}</div>
+                <div class="list-item-sub">${item.date} ${item.notes ? '| ' + escapeHtml(item.notes) : ''}</div>
             </div>
             <div class="list-item-amount amount-income">+${formatMoney(item.amount)}</div>
         </div>
@@ -1204,6 +1239,7 @@ function renderIncome(items) {
 
 function renderExpense(items) {
     const container = document.getElementById('expenseList');
+    if(!container) return;
     if(items.length === 0) {
         container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">💸</div><p>No expenses this month</p></div>';
         return;
@@ -1212,7 +1248,7 @@ function renderExpense(items) {
     container.innerHTML = items.map(item => `
         <div class="list-item">
             <div class="list-item-left">
-                <div class="list-item-title">${item.category} - ${item.desc}</div>
+                <div class="list-item-title">${escapeHtml(item.category)} - ${escapeHtml(item.desc)}</div>
                 <div class="list-item-sub">${item.date}</div>
             </div>
             <div class="list-item-amount amount-expense">-${formatMoney(item.amount)}</div>
@@ -1220,33 +1256,45 @@ function renderExpense(items) {
     `).join('');
 }
 
-function filterLoan(type) {
+function escapeHtml(text) {
+    if(!text) return '';
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+function filterLoan(btnElement, type) {
     loanFilter = type;
-    document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
-    event.target.classList.add('active');
-    loadAllData();
+
+    document.querySelectorAll('#loanFilterTabs .filter-tab').forEach(t => t.classList.remove('active'));
+    if(btnElement) btnElement.classList.add('active');
+
+    renderLoans();
 }
 
 function renderLoans(items) {
-    const container = document.getElementById('loanList');
-
-    if(!items) {
-        if(db && currentUser) {
-            getUserRef('loans').once('value').then(snap => {
-                const data = snap.val() || {};
-                const all = Object.entries(data).map(([key,val]) => ({...val, key})).filter(i => i.currency === currentCurrency);
-                doRenderLoans(all);
-            });
-        } else {
-            doRenderLoans(getLocal('loans').filter(i => i.currency === currentCurrency).map((i,idx) => ({...i, key: i.id || idx})));
-        }
+    if(items && items.length >= 0) {
+        doRenderLoans(items);
         return;
     }
-    doRenderLoans(items);
+
+    if(db && currentUser) {
+        getUserRef('loans').once('value').then(snap => {
+            const data = snap.val() || {};
+            const all = Object.entries(data).map(([key,val]) => ({...val, key})).filter(i => i.currency === currentCurrency);
+            doRenderLoans(all);
+        }).catch(() => {
+            doRenderLoans(getLocal('loans').filter(i => i.currency === currentCurrency).map(i => ({...i, key: i.id})));
+        });
+    } else {
+        doRenderLoans(getLocal('loans').filter(i => i.currency === currentCurrency).map(i => ({...i, key: i.id})));
+    }
 }
 
 function doRenderLoans(items) {
     const container = document.getElementById('loanList');
+    if(!container) return;
+
     let filtered = items;
     if(loanFilter === 'given') filtered = items.filter(i => i.type === 'given');
     if(loanFilter === 'taken') filtered = items.filter(i => i.type === 'taken');
@@ -1282,8 +1330,8 @@ function doRenderLoans(items) {
             <div class="list-item" style="flex-direction:column;align-items:flex-start;">
                 <div style="display:flex;justify-content:space-between;width:100%;align-items:center;">
                     <div class="list-item-left">
-                        <div class="list-item-title">${isGiven ? '📤' : '📥'} ${item.person}</div>
-                        <div class="list-item-sub">${item.reason} | ${item.date}</div>
+                        <div class="list-item-title">${isGiven ? '📤' : '📥'} ${escapeHtml(item.person)}</div>
+                        <div class="list-item-sub">${escapeHtml(item.reason)} | ${item.date}</div>
                         ${item.returnDate ? `<div class="list-item-sub">Return by: ${item.returnDate}</div>` : ''}
                         ${badge}
                     </div>
@@ -1301,59 +1349,77 @@ function updateDashboard(items, type) {
     const filtered = items.filter(i => i.monthKey === monthKey && i.currency === currentCurrency);
 
     if(type === 'income') {
-        const total = filtered.reduce((sum, i) => sum + parseFloat(i.amount), 0);
-        document.getElementById('dashIncome').textContent = formatMoney(total);
-        document.getElementById('dashIncomeCount').textContent = filtered.length + ' transactions';
+        const total = filtered.reduce((sum, i) => sum + (parseFloat(i.amount) || 0), 0);
+        const el = document.getElementById('dashIncome');
+        const cnt = document.getElementById('dashIncomeCount');
+        if(el) el.textContent = formatMoney(total);
+        if(cnt) cnt.textContent = filtered.length + ' transactions';
     } else {
-        const total = filtered.reduce((sum, i) => sum + parseFloat(i.amount), 0);
-        document.getElementById('dashExpense').textContent = formatMoney(total);
-        document.getElementById('dashExpenseCount').textContent = filtered.length + ' transactions';
+        const total = filtered.reduce((sum, i) => sum + (parseFloat(i.amount) || 0), 0);
+        const el = document.getElementById('dashExpense');
+        const cnt = document.getElementById('dashExpenseCount');
+        if(el) el.textContent = formatMoney(total);
+        if(cnt) cnt.textContent = filtered.length + ' transactions';
     }
     updateSavings();
 }
 
 function updateDashboardLocal(income, expense) {
-    const incTotal = income.reduce((sum, i) => sum + parseFloat(i.amount), 0);
-    const expTotal = expense.reduce((sum, i) => sum + parseFloat(i.amount), 0);
+    const incTotal = income.reduce((sum, i) => sum + (parseFloat(i.amount) || 0), 0);
+    const expTotal = expense.reduce((sum, i) => sum + (parseFloat(i.amount) || 0), 0);
 
-    document.getElementById('dashIncome').textContent = formatMoney(incTotal);
-    document.getElementById('dashIncomeCount').textContent = income.length + ' transactions';
-    document.getElementById('dashExpense').textContent = formatMoney(expTotal);
-    document.getElementById('dashExpenseCount').textContent = expense.length + ' transactions';
+    const incEl = document.getElementById('dashIncome');
+    const incCnt = document.getElementById('dashIncomeCount');
+    const expEl = document.getElementById('dashExpense');
+    const expCnt = document.getElementById('dashExpenseCount');
+
+    if(incEl) incEl.textContent = formatMoney(incTotal);
+    if(incCnt) incCnt.textContent = income.length + ' transactions';
+    if(expEl) expEl.textContent = formatMoney(expTotal);
+    if(expCnt) expCnt.textContent = expense.length + ' transactions';
 
     updateSavings();
 }
 
 function updateSavings() {
-    const incText = document.getElementById('dashIncome').textContent;
-    const expText = document.getElementById('dashExpense').textContent;
+    const incText = document.getElementById('dashIncome');
+    const expText = document.getElementById('dashExpense');
+    const savText = document.getElementById('dashSavings');
 
-    const inc = parseFloat(incText.replace(/[^0-9.-]+/g, '')) || 0;
-    const exp = parseFloat(expText.replace(/[^0-9.-]+/g, '')) || 0;
+    if(!incText || !expText || !savText) return;
 
-    document.getElementById('dashSavings').textContent = formatMoney(inc - exp);
+    const inc = parseFloat(incText.textContent.replace(/[^0-9.-]+/g, '')) || 0;
+    const exp = parseFloat(expText.textContent.replace(/[^0-9.-]+/g, '')) || 0;
+
+    savText.textContent = formatMoney(inc - exp);
 }
 
 function updateLoanSummary(items) {
     const given = items.filter(i => i.type === 'given');
     const taken = items.filter(i => i.type === 'taken');
 
-    const givenTotal = given.reduce((sum, i) => sum + parseFloat(i.amount), 0);
-    const takenTotal = taken.reduce((sum, i) => sum + parseFloat(i.amount), 0);
+    const givenTotal = given.reduce((sum, i) => sum + (parseFloat(i.amount) || 0), 0);
+    const takenTotal = taken.reduce((sum, i) => sum + (parseFloat(i.amount) || 0), 0);
 
-    const givenPending = given.filter(i => i.status === 'pending').reduce((sum, i) => sum + parseFloat(i.amount), 0);
-    const takenPending = taken.filter(i => i.status === 'pending').reduce((sum, i) => sum + parseFloat(i.amount), 0);
+    const givenPending = given.filter(i => i.status === 'pending').reduce((sum, i) => sum + (parseFloat(i.amount) || 0), 0);
+    const takenPending = taken.filter(i => i.status === 'pending').reduce((sum, i) => sum + (parseFloat(i.amount) || 0), 0);
 
-    document.getElementById('loanGivenTotal').textContent = formatMoney(givenPending);
-    document.getElementById('loanTakenTotal').textContent = formatMoney(takenPending);
+    const gTotal = document.getElementById('loanGivenTotal');
+    const tTotal = document.getElementById('loanTakenTotal');
+    const sGiven = document.getElementById('summaryGiven');
+    const sRec = document.getElementById('summaryReceived');
+    const sNet = document.getElementById('summaryNet');
+    const sOverall = document.getElementById('summaryOverall');
 
-    document.getElementById('summaryGiven').textContent = formatMoney(givenTotal);
-    document.getElementById('summaryReceived').textContent = formatMoney(takenTotal);
-    document.getElementById('summaryNet').textContent = formatMoney(givenPending - takenPending);
+    if(gTotal) gTotal.textContent = formatMoney(givenPending);
+    if(tTotal) tTotal.textContent = formatMoney(takenPending);
+    if(sGiven) sGiven.textContent = formatMoney(givenTotal);
+    if(sRec) sRec.textContent = formatMoney(takenTotal);
+    if(sNet) sNet.textContent = formatMoney(givenPending - takenPending);
 
-    const savingsText = document.getElementById('dashSavings').textContent;
-    const savings = parseFloat(savingsText.replace(/[^0-9.-]+/g, '')) || 0;
-    document.getElementById('summaryOverall').textContent = formatMoney(savings + takenPending - givenPending);
+    const savingsText = document.getElementById('dashSavings');
+    const savings = savingsText ? (parseFloat(savingsText.textContent.replace(/[^0-9.-]+/g, '')) || 0) : 0;
+    if(sOverall) sOverall.textContent = formatMoney(savings + takenPending - givenPending);
 }
 
 function updateLoanSummaryLocal(items) {
@@ -1402,6 +1468,10 @@ function loadDemoData() {
         });
         saveLocal('loans', {
             type: 'given', person: 'Ravi', amount: 10000, reason: 'Emergency', date: today,
+            currency: 'LKR', status: 'pending', timestamp: Date.now()
+        });
+        saveLocal('loans', {
+            type: 'taken', person: 'Kumar', amount: 5000, reason: 'Medical', date: today,
             currency: 'LKR', status: 'pending', timestamp: Date.now()
         });
 
