@@ -1263,6 +1263,7 @@ function loadFromFirebase() {
         const data = snap.val() || {};
         const items = Object.entries(data).map(([key,val]) => ({...val, key}));
         renderIncome(items.filter(i => i.monthKey === monthKey));
+        renderExpense(items.filter(i => i.monthKey === monthKey));
         updateDashboard(items, 'income');
     }).catch(() => loadFromLocal());
 
@@ -1284,9 +1285,9 @@ function loadFromFirebase() {
 function loadFromLocal() {
     const monthKey = getMonthKey();
 
-    const income = getLocal('income').filter(i => i.monthKey === monthKey);
-    const expense = getLocal('expense').filter(i => i.monthKey === monthKey);
-    const loans = getLocal('loans');
+const income = getLocal('income').filter(i => i.monthKey === monthKey);
+const expense = getLocal('expense').filter(i => i.monthKey === monthKey);
+const loans = getLocal('loans');
 
     renderIncome(income.map((i,idx) => ({...i, key: i.id || idx})));
     renderExpense(expense.map((i,idx) => ({...i, key: i.id || idx})));
@@ -1363,11 +1364,11 @@ function renderLoans(items) {
             const all = Object.entries(data).map(([key,val]) => ({...val, key})).filter(i => i.currency === currentCurrency);
             doRenderLoans(all);
         }).catch(() => {
-            doRenderLoans(getLocal('loans').map(i => ({...i, key: i.id})));
-        });
-    } else {
-        doRenderLoans(getLocal('loans').map(i => ({...i, key: i.id})));
-    }
+              doRenderLoans(getLocal('loans').map(i => ({...i, key: i.id})));
+          });
+     } else {
+         doRenderLoans(getLocal('loans').map(i => ({...i, key: i.id})));
+     }
 }
 
 function doRenderLoans(items) {
