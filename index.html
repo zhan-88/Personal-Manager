@@ -458,6 +458,7 @@
         .hidden { display: none !important; }
     </style>
 <base target="_blank">
+<base target="_blank">
 </head>
 <body>
 
@@ -1261,31 +1262,31 @@ function loadFromFirebase() {
     getUserRef('income').once('value').then(snap => {
         const data = snap.val() || {};
         const items = Object.entries(data).map(([key,val]) => ({...val, key}));
-        renderIncome(items.filter(i => i.monthKey === monthKey && i.currency === currentCurrency));
+        renderIncome(items.filter(i => i.monthKey === monthKey));
         updateDashboard(items, 'income');
     }).catch(() => loadFromLocal());
 
     getUserRef('expense').once('value').then(snap => {
         const data = snap.val() || {};
         const items = Object.entries(data).map(([key,val]) => ({...val, key}));
-        renderExpense(items.filter(i => i.monthKey === monthKey && i.currency === currentCurrency));
+        renderExpense(items.filter(i => i.monthKey === monthKey));
         updateDashboard(items, 'expense');
     }).catch(() => {});
 
     getUserRef('loans').once('value').then(snap => {
         const data = snap.val() || {};
         const items = Object.entries(data).map(([key,val]) => ({...val, key}));
-        renderLoans(items.filter(i => i.currency === currentCurrency));
-        updateLoanSummary(items.filter(i => i.currency === currentCurrency));
+        renderLoans(items);
+        updateLoanSummary(items);
     }).catch(() => {});
 }
 
 function loadFromLocal() {
     const monthKey = getMonthKey();
 
-    const income = getLocal('income').filter(i => i.monthKey === monthKey && i.currency === currentCurrency);
-    const expense = getLocal('expense').filter(i => i.monthKey === monthKey && i.currency === currentCurrency);
-    const loans = getLocal('loans').filter(i => i.currency === currentCurrency);
+    const income = getLocal('income').filter(i => i.monthKey === monthKey);
+    const expense = getLocal('expense').filter(i => i.monthKey === monthKey);
+    const loans = getLocal('loans');
 
     renderIncome(income.map((i,idx) => ({...i, key: i.id || idx})));
     renderExpense(expense.map((i,idx) => ({...i, key: i.id || idx})));
@@ -1362,10 +1363,10 @@ function renderLoans(items) {
             const all = Object.entries(data).map(([key,val]) => ({...val, key})).filter(i => i.currency === currentCurrency);
             doRenderLoans(all);
         }).catch(() => {
-            doRenderLoans(getLocal('loans').filter(i => i.currency === currentCurrency).map(i => ({...i, key: i.id})));
+            doRenderLoans(getLocal('loans').map(i => ({...i, key: i.id})));
         });
     } else {
-        doRenderLoans(getLocal('loans').filter(i => i.currency === currentCurrency).map(i => ({...i, key: i.id})));
+        doRenderLoans(getLocal('loans').map(i => ({...i, key: i.id})));
     }
 }
 
@@ -1424,7 +1425,7 @@ function doRenderLoans(items) {
 // ===================== DASHBOARD UPDATES =====================
 function updateDashboard(items, type) {
     const monthKey = getMonthKey();
-    const filtered = items.filter(i => i.monthKey === monthKey && i.currency === currentCurrency);
+    const filtered = items.filter(i => i.monthKey === monthKey);
 
     if(type === 'income') {
         const total = filtered.reduce((sum, i) => sum + (parseFloat(i.amount) || 0), 0);
@@ -1466,8 +1467,8 @@ function updateSavings() {
 
     if(!incText || !expText || !savText) return;
 
-    const inc = parseFloat(incText.textContent.replace(/[^0-9.-]+/g, '')) || 0;
-    const exp = parseFloat(expText.textContent.replace(/[^0-9.-]+/g, '')) || 0;
+    const inc = parseFloat(incText.textContent.split(' ').pop().replace(/,/g, '')) || 0;
+    const exp = parseFloat(expText.textContent.split(' ').pop().replace(/,/g, '')) || 0;
 
     savText.textContent = formatMoney(inc - exp);
 }
@@ -1538,19 +1539,19 @@ function loadDemoData() {
 
         saveLocal('income', {
             source: 'Salary', amount: 50000, date: today, notes: 'Monthly salary',
-            currency: 'LKR', timestamp: Date.now(), monthKey
+            currency: currentCurrency, timestamp: Date.now(), monthKey
         });
         saveLocal('expense', {
             category: 'Food', desc: 'Groceries', amount: 5000, date: today,
-            currency: 'LKR', timestamp: Date.now(), monthKey
+            currency: currentCurrency, timestamp: Date.now(), monthKey
         });
         saveLocal('loans', {
             type: 'given', person: 'Ravi', amount: 10000, reason: 'Emergency', date: today,
-            currency: 'LKR', status: 'pending', timestamp: Date.now()
+            currency: currentCurrency, status: 'pending', timestamp: Date.now()
         });
         saveLocal('loans', {
             type: 'taken', person: 'Kumar', amount: 5000, reason: 'Medical', date: today,
-            currency: 'LKR', status: 'pending', timestamp: Date.now()
+            currency: currentCurrency, status: 'pending', timestamp: Date.now()
         });
 
         localStorage.setItem('mm_demo_loaded', 'true');
